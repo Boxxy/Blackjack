@@ -3,6 +3,7 @@ package com.stf.bj.app.players;
 import java.util.List;
 
 import com.stf.bj.app.bj.Spot;
+import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
 import com.stf.bj.app.table.Table;
@@ -10,9 +11,11 @@ import com.stf.bj.app.table.TableRules;
 
 public class PlayerManager {
 	private final List<Spot> spots;
+	private final AnimationSettings animationSettings; //unused atm
 
-	public PlayerManager(List<Spot> spotList) {
+	public PlayerManager(List<Spot> spotList, AnimationSettings animationSettings) {
 		this.spots = spotList;
+		this.animationSettings = animationSettings;
 	}
 
 	public void sendEvent(Event e) {

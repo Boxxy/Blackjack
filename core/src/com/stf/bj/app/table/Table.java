@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.stf.bj.app.table.TableRules.PayAndCleanPlayerBlackjack;
+
 /**
  * The table class contains all of the black jack game logic, the Table's spots,
  * table's rules, all Cards, Money that is in play, and the dealer. The tabel
@@ -119,7 +121,8 @@ public class Table {
 			registerEvent(new Event(EventType.DEALER_BLACKJACK));
 			afterPlay();
 		} else {
-			cleanupBlackjacks();
+			if(tableRules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START)
+				cleanupBlackjacks();
 			updateCurrentSpotAndHand();
 			if (currentSpot!=null) {
 				state = TableStates.PLAY;

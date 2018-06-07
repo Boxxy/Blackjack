@@ -6,6 +6,7 @@ import java.util.List;
 import com.stf.bj.app.players.Play;
 import com.stf.bj.app.players.PlayerManager;
 import com.stf.bj.app.players.PlayerType;
+import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.SpriteManager;
 import com.stf.bj.app.table.Card;
 import com.stf.bj.app.table.Event;
@@ -13,6 +14,7 @@ import com.stf.bj.app.table.Ranks;
 import com.stf.bj.app.table.Suits;
 import com.stf.bj.app.table.Table;
 import com.stf.bj.app.table.TableRules;
+import com.stf.bj.app.table.TableRules.PayAndCleanPlayerBlackjack;
 
 public class BjManager {
 	private static final int BUST_TIMER_BASE = 150;
@@ -26,16 +28,19 @@ public class BjManager {
 	private static final int INSURANCE_TIMER_BASE = 500;
 	private static final int INSURANCE_TIMER_RESET = 300;
 	private final List<Spot> spots;
+	private final AnimationSettings animationSettings;
+
 	boolean insuranceMode = false;
 
-	public BjManager(TableRules rules) {
+	public BjManager(TableRules rules, AnimationSettings animationSettings) {
+		this.animationSettings = animationSettings;
 		table = new Table(rules);
 		this.rules = rules;
 		spots = new ArrayList<Spot>();
 		for (int spotIndex = 0; spotIndex < rules.getSpots(); spotIndex++) {
 			spots.add(new Spot(spotIndex, rules.getSplits() + 1));
 		}
-		playerManager = new PlayerManager(spots);
+		playerManager = new PlayerManager(spots, animationSettings);
 	}
 
 	public void shadyShit(List<Ranks> ranks) {
@@ -200,7 +205,13 @@ public class BjManager {
 		case SPOT_ONTO_NEXT_HAND:
 			spot.ontoNextHand();
 			return false;
-
+		case WIN_BLACKJACK:
+			if (rules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
+				sm.discardSpot(spot.getSprite());
+				return true;
+			} else {
+				return false;
+			}
 		default:
 			return false;
 		}
@@ -224,6 +235,10 @@ public class BjManager {
 
 	public List<Spot> getSpots() {
 		return spots;
+	}
+
+	public AnimationSettings getAnimationSettings() {
+		return animationSettings;
 	}
 
 }

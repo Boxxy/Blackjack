@@ -47,7 +47,7 @@ public class Spot {
 	}
 
 	public boolean isWaiting() {
-		return currentHand != null;
+		return currentHand != null && !currentHand.isBlackjack();
 	}
 
 	public void dealCard(Card c) {

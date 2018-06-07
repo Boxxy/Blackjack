@@ -38,7 +38,7 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		bjManager = new BjManager(TableRules.STANDARD_MYSTIC_RULES());
+		bjManager = new BjManager(TableRules.getRandom(), AnimationSettings.getRandom());
 		bjManager.addPlayer(0, PlayerType.BASIC_BOT);
 		bjManager.addPlayer(1, PlayerType.BASIC_COUNTING_BOT);
 		bjManager.addPlayer(2, PlayerType.BASIC_COUNTING_BOT);
@@ -46,8 +46,10 @@ public class BjApp extends ApplicationAdapter {
 		bjManager.addPlayer(4, PlayerType.BASIC_INDEX_COUNTING_BOT);
 		bjManager.addPlayer(5, PlayerType.BASIC_INDEX_COUNTING_BOT);
 		bjManager.openTable();
-		spriteManager = new SpriteManager(batch, bjManager.getSpots(), AnimationSettings.getNew()); //Player manager is a at different level, should we really do it this way? TODO
-		
+
+		// Player manager is a at different level, should we really do it this way? TODO
+		spriteManager = new SpriteManager(batch, bjManager.getSpots(), bjManager.getAnimationSettings());
+
 		List<Ranks> r = new ArrayList<Ranks>();
 		r.add(Ranks.ACE);
 		r.add(Ranks.ACE);
@@ -64,8 +66,9 @@ public class BjApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		bjManager.input(handleInput());
-		
-		if (!spriteManager.busy()) { //TODO i don't like this set up for processing. Graphics, input, and game logic should be less coupled.
+
+		if (!spriteManager.busy()) { // TODO i don't like this set up for processing. Graphics, input, and game logic
+										// should be less coupled.
 			if (!bjManager.processEvents(spriteManager)) {
 				bjManager.tick(spriteManager);
 			}
