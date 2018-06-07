@@ -212,6 +212,7 @@ public class Spot {
 				hand.setCurrentPlayingHand(false);
 			}else if (handFound) {
 				hand.setCurrentPlayingHand(true);
+				return;
 			}
 		}
 	}
