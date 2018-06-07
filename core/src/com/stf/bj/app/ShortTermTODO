@@ -1,0 +1,25 @@
+Double Arrow bug with splits
+Insurance
+Timer + Animation settings
+Timer + Animation actions
+
+Play check concept
+Wager check concept
+Index check concept
+Player score and stats
+Logging
+
+Refactor bots to use Spot/Hand instead of their own totals
+Basic bot with some errors
+
+Table Hopping / no more negative moneys/ Animations to match
+Basic bots with table hopping and running out of money
+
+Adding little "Hit", "Stay" etc text pop ups
+Animation/Graphical improvements
+
+Menu page to control settings at runtime
+Cookies/Local saves to remember settings
+
+
+CORE - If ace resplit is allowed don't allow hit/double ?????? 
