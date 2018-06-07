@@ -12,6 +12,7 @@ public class Human implements Player {
 
 	int currentCommand = -1;
 	private static final int NULL_COMMAND = -1;
+	boolean lastInsurancePlay = false;
 
 	@Override
 	public Play getMove(int handIndex, boolean canDouble, boolean canSplit, boolean canSurrender) {
@@ -38,7 +39,14 @@ public class Human implements Player {
 
 	@Override
 	public boolean getInsurancePlay() {
-		return false;
+		if (currentCommand == Input.Keys.E) {
+			lastInsurancePlay = true;
+			currentCommand = NULL_COMMAND;
+		} else if (currentCommand == Input.Keys.D) {
+			lastInsurancePlay = false;
+			currentCommand = NULL_COMMAND;
+		}
+		return lastInsurancePlay;
 	}
 
 	@Override
@@ -51,6 +59,7 @@ public class Human implements Player {
 		if (e.getType() == EventType.TABLE_OPENED && wager != -1) {
 			lastWager = wager;
 			wager = -1;
+			lastInsurancePlay = false;
 		}
 	}
 

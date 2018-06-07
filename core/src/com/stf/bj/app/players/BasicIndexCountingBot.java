@@ -31,11 +31,5 @@ public class BasicIndexCountingBot extends BasicCountingBot {
 
 		return super.getMove(handIndex, canDouble, canSplit, canSurrender);
 	}
-	
-	@Override
-	public boolean getInsurancePlay() {
-		return true;
-	}
-
 
 }

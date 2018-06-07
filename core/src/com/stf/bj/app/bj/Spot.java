@@ -241,9 +241,6 @@ public class Spot {
 
 	public void takeInsurance() {
 		bettingInsurance = false;
-		playerChips -= wager*3/2;
-
-		chipDisplay = String.valueOf(playerChips);
 	}
 
 }
