@@ -44,6 +44,9 @@ public class Spot {
 	}
 
 	public void addPlayer(Player player) {
+		if(this.player != null) {
+			throw new IllegalStateException();
+		}
 		this.player = player;
 		if (player.getClass() == Human.class) {
 			human = (Human) player;
