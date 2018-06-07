@@ -2,6 +2,7 @@ package com.stf.bj.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -38,25 +39,29 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		bjManager = new BjManager(TableRules.getRandom(), AnimationSettings.getRandom());
-		bjManager.addPlayer(0, PlayerType.BASIC_BOT);
-		bjManager.addPlayer(1, PlayerType.BASIC_COUNTING_BOT);
-		bjManager.addPlayer(2, PlayerType.BASIC_COUNTING_BOT);
-		bjManager.addPlayer(3, PlayerType.HUMAN);
-		bjManager.addPlayer(4, PlayerType.BASIC_INDEX_COUNTING_BOT);
-		bjManager.addPlayer(5, PlayerType.BASIC_INDEX_COUNTING_BOT);
+		TableRules rules = TableRules.getRandom();
+		bjManager = new BjManager(rules, AnimationSettings.getRandom());
+		Random r = new Random(System.currentTimeMillis());
+		int playerSpot = r.nextInt(rules.getSpots());
+		bjManager.addPlayer(playerSpot, PlayerType.HUMAN);
+		for(int spot = 0; spot < rules.getSpots(); spot++) {
+			if(spot == playerSpot) {
+				continue;
+			}
+			bjManager.addPlayer(spot, PlayerType.getRandom());
+		}
 		bjManager.openTable();
 
 		// Player manager is a at different level, should we really do it this way? TODO
 		spriteManager = new SpriteManager(batch, bjManager.getSpots(), bjManager.getAnimationSettings());
 
-		List<Ranks> r = new ArrayList<Ranks>();
-		r.add(Ranks.ACE);
-		r.add(Ranks.ACE);
-		r.add(Ranks.TEN);
-		r.add(Ranks.TEN);
-		r.add(Ranks.ACE);
-		r.add(Ranks.TEN);
+		List<Ranks> ranks = new ArrayList<Ranks>();
+		ranks.add(Ranks.ACE);
+		ranks.add(Ranks.ACE);
+		ranks.add(Ranks.TEN);
+		ranks.add(Ranks.TEN);
+		ranks.add(Ranks.ACE);
+		ranks.add(Ranks.TEN);
 		//bjManager.shadyShit(r);
 	}
 
