@@ -19,8 +19,6 @@ public class BjManager {
 	Table table;
 	private final TableRules rules;
 	int playerSpot = 0;
-	int dealerCards = 0;
-	boolean dealerHasFaceDown = false;
 	private final PlayerManager playerManager;
 	int timer = 0;
 	private static final int DEAL_TIMER_BASE = 150;
@@ -128,11 +126,6 @@ public class BjManager {
 		return false;
 	}
 
-	public void newDeal() {
-		dealerCards = 0;
-		dealerHasFaceDown = false;
-	}
-
 	public boolean processEvents(SpriteManager sm) {
 		boolean takeRenderBreak = false;
 		while (table.hasNewEvent() && !takeRenderBreak && !insuranceMode) {
@@ -150,23 +143,14 @@ public class BjManager {
 	private boolean processTableEvent(SpriteManager sm, Event e) {
 		switch (e.getType()) {
 		case DEALER_GAINED_CARD:
-			if (dealerCards == 2 && dealerHasFaceDown) {
-				dealerHasFaceDown = false;
-				sm.setFaceDownDealerCard(e.getCard());
-			} else {
-				dealerCards++;
-				sm.addDealerCard(e.getCard());
-			}
+			sm.addDealerCard(e.getCard());
 			return true;
 		case DEALER_GAINED_FACE_DOWN_CARD:
-			dealerCards++;
-			dealerHasFaceDown = true;
 			sm.addDealerCard(null);
 			return true;
 		case DEAL_STARTED:
 			sm.setDisplayString("");
-			newDeal();
-			sm.clearAllSprites();
+			sm.newDeal();
 			return false;
 		case DEALER_ENDED_TURN:
 			sm.setDelay(150);

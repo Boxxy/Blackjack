@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.stf.bj.app.bj.BjManager;
 import com.stf.bj.app.players.PlayerType;
+import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.CardSprite;
 import com.stf.bj.app.sprites.SpriteManager;
 import com.stf.bj.app.table.Ranks;
@@ -45,7 +46,7 @@ public class BjApp extends ApplicationAdapter {
 		bjManager.addPlayer(4, PlayerType.BASIC_INDEX_COUNTING_BOT);
 		bjManager.addPlayer(5, PlayerType.BASIC_INDEX_COUNTING_BOT);
 		bjManager.openTable();
-		spriteManager = new SpriteManager(batch, bjManager.getSpots()); //Player manager is a at different level, should we really do it this way? TODO
+		spriteManager = new SpriteManager(batch, bjManager.getSpots(), AnimationSettings.getNew()); //Player manager is a at different level, should we really do it this way? TODO
 		
 		List<Ranks> r = new ArrayList<Ranks>();
 		r.add(Ranks.ACE);

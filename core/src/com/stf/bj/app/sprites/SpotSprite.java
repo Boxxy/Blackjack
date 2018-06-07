@@ -86,4 +86,9 @@ public class SpotSprite {
 		}
 		
 	}
+
+	public void setCardSpacing(float horiziontalCardOffset, float verticalCardOffset) {
+		// TODO Auto-generated method stub
+		
+	}
 }
