@@ -62,14 +62,14 @@ public class TableRules {
 	}
 
 	public static TableRules mystic6() {
-		return new TableRules(6, 6, true, false, true, true, 5*52, 3, PayAndCleanPlayerBlackjack.PLAY_START, "Mystic 6 Deck (1 deck penetration) with No Surrender");
+		return new TableRules(6, 6, true, false, true, true, 5*52, 3, PayAndCleanPlayerBlackjack.PLAY_START, "Mystic 6 Deck (1 deck pen)");
 	}
 
 	public static TableRules mystic4Surrender() {
-		return new TableRules(4, 6, true, true, true, true, 3*52, 3, PayAndCleanPlayerBlackjack.PLAY_START,  "Mystic 4 Deck (1 deck penetration) with Surrender");
+		return new TableRules(4, 6, true, true, true, true, 3*52, 3, PayAndCleanPlayerBlackjack.PLAY_START,  "Mystic 4 Deck (1 deck pen) with Surrender");
 	}
 	public static TableRules hochunk() {
-		return new TableRules(6, 6, true, false, true, false, 52*4+52/2, 2, PayAndCleanPlayerBlackjack.CLEAN_UP, "Ho chunk 5 Deck (1 deck penetration) with Surrender");
+		return new TableRules(6, 6, true, false, true, false, 52*4+52/2, 2, PayAndCleanPlayerBlackjack.CLEAN_UP, "Hochunk 5 Deck (1.5 deck pen) ");
 	}
 	
 	public static TableRules getRandom() {
