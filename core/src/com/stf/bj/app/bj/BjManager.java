@@ -25,8 +25,8 @@ public class BjManager {
 	int timer = 0;
 	private static final int DEAL_TIMER_BASE = 150;
 	private static final int DEAL_TIMER_RESET = 100;
-	private static final int INSURANCE_TIMER_BASE = 500;
-	private static final int INSURANCE_TIMER_RESET = 300;
+	private static final int INSURANCE_TIMER_BASE = 300;
+	private static final int INSURANCE_TIMER_RESET = 100;
 	private final List<Spot> spots;
 	private final AnimationSettings animationSettings;
 
@@ -171,9 +171,9 @@ public class BjManager {
 			insuranceMode = true;
 			sm.setDisplayString("Insurance / even money?");
 			return false;
-		case DEALER_BLACKJACK:
+		case INSURANCE_PAID:
 			playerManager.payoutInsurance();
-		case PLAY_STARTED:
+		case INSURANCE_COLLECTED:
 			playerManager.collectInsurance();
 		default:
 			return false;
@@ -207,7 +207,9 @@ public class BjManager {
 			return false;
 		case WIN_BLACKJACK:
 			if (rules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
+				spot.clearCards();
 				sm.discardSpot(spot.getSprite());
+				//chips are handled in playermanager, weird TODO
 				return true;
 			} else {
 				return false;

@@ -110,17 +110,25 @@ public class Table {
 	}
 
 	public void startDeal() {
+		boolean insuranceOffered = false;
 		if (!canStartDeal())
 			throw new IllegalStateException("Can't Start Deal");
 		registerEvent(new Event(EventType.DEAL_STARTED));
 		deal();
 		if (dealer.getCard(0).isAce()) {
 			registerEvent(new Event(EventType.INSURANCE_OFFERED));
+			insuranceOffered = true;
 		}
 		if (dealer.isBlackjack()) {
+			if(insuranceOffered) {
+				registerEvent(new Event(EventType.INSURANCE_PAID));
+			}
 			registerEvent(new Event(EventType.DEALER_BLACKJACK));
 			afterPlay();
 		} else {
+			if(insuranceOffered) {
+				registerEvent(new Event(EventType.INSURANCE_COLLECTED));
+			}
 			if(tableRules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START)
 				cleanupBlackjacks();
 			updateCurrentSpotAndHand();
