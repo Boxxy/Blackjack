@@ -10,14 +10,16 @@ public class Sprite {
 	private TextureRegion texture;
 	private Vector2 location = new Vector2(0, 0);
 	private Vector2 destination = new Vector2(0, 0);
+	private Vector2 destinationToAdd = null;
 
 	private float velocity = 12f;
 	private boolean visible, moving;
 	private float rotation = 0;
 	private float targetRotation = 0;
 	private float rotationalVelocity;
-	
+
 	private int delay;
+	private int delayToAdd;
 
 	public void setTexture(String path) {
 		texture = new TextureRegion(new Texture(Gdx.files.internal(path)));
@@ -41,6 +43,10 @@ public class Sprite {
 	}
 
 	public void setDestination(Vector2 v, float targetRotation) {
+		if (moving) {
+			destinationToAdd = v;
+			return;
+		}
 		destination.x = v.x;
 		destination.y = v.y;
 		moving = true;
@@ -48,6 +54,7 @@ public class Sprite {
 			location = destination;
 			rotation = targetRotation;
 			rotationalVelocity = 0;
+			moving = false;
 			return;
 		}
 
@@ -80,9 +87,12 @@ public class Sprite {
 	}
 
 	protected boolean updateLocation() {
-		if(delay > 0) {
+		if (delay > 0) {
 			delay--;
 			return false;
+		}
+		if (delayToAdd > 0) {
+			delayToAdd--;
 		}
 		float distance = location.dst(destination);
 		if (distance <= velocity) {
@@ -90,6 +100,15 @@ public class Sprite {
 			location.y = destination.y;
 			rotation = targetRotation;
 			moving = false;
+			
+			if (delayToAdd > 0) {
+				delay = delayToAdd;
+				delayToAdd = 0;
+			}
+			if (destinationToAdd != null) {
+				setDestination(destinationToAdd);
+				destinationToAdd = null;
+			}
 			return true;
 		}
 		Vector2 wayToGo = destination.cpy();
@@ -106,8 +125,12 @@ public class Sprite {
 
 		return false;
 	}
-	
+
 	public void addDelay(int delay) {
-		this.delay = delay;
+		if (moving) {
+			delayToAdd = delay;
+		} else {
+			this.delay = delay;
+		}
 	}
 }

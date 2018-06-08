@@ -24,17 +24,18 @@ public class Spot {
 	int activeHands = 0;
 	private boolean bettingInsurance = false;
 	private boolean tookEvenMoney;
+	private boolean playedLastRound = false;
 
 	public Spot(int spotIndex, AppSettings settings) {
 		this.index = spotIndex;
-		int maxHands = settings.getTableRules().getSplits()+1;
+		int maxHands = settings.getTableRules().getSplits() + 1;
 		this.hands = new ArrayList<Hand>(maxHands);
 		for (int hand = 0; hand < maxHands; hand++) {
 			this.hands.add(new Hand(this, settings));
 		}
-		
-		//setupSprites
-	
+
+		// setupSprites
+
 		List<HandSprite> handSprites = new ArrayList<HandSprite>();
 		for (Hand h : this.hands) {
 			handSprites.add(h.getSprite());
@@ -48,7 +49,7 @@ public class Spot {
 	}
 
 	public void addPlayer(Player player) {
-		if(this.player != null) {
+		if (this.player != null) {
 			throw new IllegalStateException();
 		}
 		this.player = player;
@@ -175,11 +176,11 @@ public class Spot {
 	}
 
 	public void setInPlay(boolean inPlay) {
-		if(inPlay==true) {
+		if (inPlay == true) {
 			hands.get(0).setCurrentPlayingHand(true);
-		}else {
-			for(Hand h : hands) {
-				if(h.isTheCurrentPlayingHand()) {
+		} else {
+			for (Hand h : hands) {
+				if (h.isTheCurrentPlayingHand()) {
 					h.setCurrentPlayingHand(false);
 				}
 			}
@@ -192,7 +193,7 @@ public class Spot {
 		hands.get(handIndex).clearCards();
 		for (int otherHandIndex = handIndex + 1; otherHandIndex < hands.size(); otherHandIndex++) {
 			Hand otherHand = hands.get(otherHandIndex);
-			if(otherHand.hasCards()) {
+			if (otherHand.hasCards()) {
 				otherHand.setActualIndex(otherHand.getActualIndex() - 1);
 			}
 		}
@@ -202,18 +203,19 @@ public class Spot {
 		for (Hand h : hands) {
 			h.clearCards();
 		}
-		activeHands = 1; //TODO this should be 0 and set to 1 when we actually have a hadn or it's name changed
+		activeHands = 1; // TODO this should be 0 and set to 1 when we actually have a hadn or it's name
+							// changed
 		tookEvenMoney = false;
 	}
 
 	public void ontoNextHand() {
 		boolean handFound = false;
-		for(int handIndex = 0; handIndex<hands.size(); handIndex++) {
+		for (int handIndex = 0; handIndex < hands.size(); handIndex++) {
 			Hand hand = hands.get(handIndex);
-			if(hand.isTheCurrentPlayingHand()) {
+			if (hand.isTheCurrentPlayingHand()) {
 				handFound = true;
 				hand.setCurrentPlayingHand(false);
-			}else if (handFound) {
+			} else if (handFound) {
 				hand.setCurrentPlayingHand(true);
 				return;
 			}
@@ -226,10 +228,10 @@ public class Spot {
 
 	public void setBettingInsurance(boolean bettingInsurance) {
 		this.bettingInsurance = bettingInsurance;
-		if(bettingInsurance) {
-			playerChips -= wager/2;
-		}else {
-			playerChips += wager/2;
+		if (bettingInsurance) {
+			playerChips -= wager / 2;
+		} else {
+			playerChips += wager / 2;
 		}
 
 		chipDisplay = String.valueOf(playerChips);
@@ -237,7 +239,7 @@ public class Spot {
 
 	public void payInsurance() {
 		bettingInsurance = false;
-		playerChips += wager*3/2;
+		playerChips += wager * 3 / 2;
 
 		chipDisplay = String.valueOf(playerChips);
 	}
@@ -262,6 +264,14 @@ public class Spot {
 	public void setDoubled(int handIndex) {
 		addChips(handIndex, 1, true);
 		hands.get(handIndex).setDoubled();
+	}
+
+	public boolean getPlayedLastRound() {
+		return playedLastRound;
+	}
+
+	public void setPlayedLastRound() {
+		playedLastRound = singleBetOut();
 	}
 
 }

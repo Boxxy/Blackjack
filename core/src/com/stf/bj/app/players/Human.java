@@ -30,6 +30,10 @@ public class Human implements Player {
 				if (canSplit) {
 					p = Play.SPLIT;
 				}
+			} else if (currentCommand == Input.Keys.R) {
+				if (canSurrender) {
+					p = Play.SURRENDER;
+				}
 			}
 			currentCommand = NULL_COMMAND;
 		}
@@ -78,11 +82,17 @@ public class Human implements Player {
 					wager = 5.0;
 				}
 			} else {
-				wager += 5.0;
+				if(wager > 49.0) {
+					wager += 25.0;
+				}else {
+					wager += 5.0;
+				}
 			}
 			currentCommand = NULL_COMMAND;
 		} else if (currentCommand == Input.Keys.D) {
-			if (wager > 0) {
+			if (wager > 51.0) {
+				wager -= 25.0;
+			} else if (wager > 0) {
 				wager -= 5.0;
 			} else {
 				wager = 0;

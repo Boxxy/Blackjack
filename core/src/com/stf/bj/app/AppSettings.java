@@ -29,15 +29,16 @@ public class AppSettings {
 	}
 	
 	public static AppSettings getNew() {
-		return new AppSettings(TableRules.mystic4Surrender(), AnimationSettings.getNew(), TimingSettings.getNew());
+		return new AppSettings(TableRules.mystic4Surrender(), AnimationSettings.getNew(), TimingSettings.getFast());
 	}
 	
 	public static AppSettings getClassic() {
-		return new AppSettings(TableRules.hochunk(), AnimationSettings.getClassic(), TimingSettings.getClassic());
+		return new AppSettings(TableRules.hochunk(), AnimationSettings.getClassic(), TimingSettings.getSlow());
 	}
 	
 	public static AppSettings getRandom() {
 		return new AppSettings(TableRules.getRandom(), AnimationSettings.getRandom(), TimingSettings.getRandom());
 	}
+	
 	
 }

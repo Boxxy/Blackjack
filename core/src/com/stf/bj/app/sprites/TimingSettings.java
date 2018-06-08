@@ -40,24 +40,30 @@ public class TimingSettings {
 		return cardSpeed;
 	}
 
-	public static TimingSettings getClassic() {
-		return new TimingSettings(12f, 200, 100, 300, 100, 500, 80, 120, 50, 50, 150, 100);
+	public static TimingSettings getSlow() {
+		return new TimingSettings(12f, 600, 150, 300, 100, 300, 60, 120, 50, 50, 150, 100);
 	}
 
-	public static TimingSettings getNew() {
-		return new TimingSettings(18f, 150, 50, 200, 50, 300, 30, 40, 20, 40, 100, 50);
+	public static TimingSettings getFast() {
+		return new TimingSettings(18f, 350, 80, 200, 50, 200, 30, 40, 20, 40, 100, 50);
+	}
+
+	private static TimingSettings getInstant() {
+		return new TimingSettings(0,0,0,0,0,0,0,0, 0, 0, 0, 0);
 	}
 
 	public static TimingSettings getRandom() {
 		Random r = new Random(System.currentTimeMillis());
-		int i = r.nextInt(2);
+		int i = r.nextInt(3);
 		if (i == 0) {
-			return getClassic();
+			return getSlow();
 		} else if (i == 1) {
-			return getNew();
+			return getFast();
+		}else if (i == 2) {
+			return getInstant();
 		}
 
-		return getNew();
+		return getFast();
 	}
 
 	public int getWagerTimerBase() {

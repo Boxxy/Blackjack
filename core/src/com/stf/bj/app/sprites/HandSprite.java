@@ -105,8 +105,8 @@ public class HandSprite {
 	private void updateCardSpriteLocations(int delayBeforeMoving) {
 		for (int cardIndex = 0; cardIndex < cardSprites.size(); cardIndex++) {
 			CardSprite cs = cardSprites.get(cardIndex);
-			cs.setDestination(getPlayerCardLocation(cardIndex, cs.isDoubled()));
 			cs.addDelay(delayBeforeMoving);
+			cs.setDestination(getPlayerCardLocation(cardIndex, cs.isDoubled()));
 		}
 	}
 
@@ -116,8 +116,8 @@ public class HandSprite {
 
 	public void setDestinationForAllCards(Vector2 destination, int delayBeforeMoving) {
 		for (CardSprite cs : cardSprites) {
-			cs.setDestination(destination);
 			cs.addDelay(delayBeforeMoving);
+			cs.setDestination(destination);
 		}
 	}
 

@@ -24,8 +24,8 @@ public class AnimationManager {
 	private static final float DEALER_CARD_SPACING_X = 80f;
 	private static final float SPOT_Y = 200f;
 	private static final float EDGE_SPOT_Y = 300f;
-	public static final Vector2 DECK_ANCHOR = new Vector2(600f, 600f);
-	public static final Vector2 SHOE_ANCHOR = new Vector2(100f, 600f);
+	public static final Vector2 DECK_ANCHOR = new Vector2(900f, 600f);
+	public static final Vector2 DISCARD_ANCHOR = new Vector2(100f, 600f);
 	private static final Vector2 MIDDLE_TEXT_ANCHOR = new Vector2(500f, 400f);
 	private static final Vector2 DEALER_ANCHOR = new Vector2(800f, 600f);
 	private static final Vector2 SPOT_0_ANCHOR = new Vector2(1100f, EDGE_SPOT_Y);
@@ -41,6 +41,7 @@ public class AnimationManager {
 	private String displayString = "";
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
+	public String debugText = "";
 
 	public AnimationManager(SpriteBatch batch, List<Spot> spots, AppSettings settings) {
 		this.batch = batch;
@@ -66,6 +67,7 @@ public class AnimationManager {
 		batch.begin();
 
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
+		font.draw(batch, debugText, 10, 718);
 
 		for (CardSprite cs : dealer) {
 			cs.tick(batch);
@@ -85,36 +87,37 @@ public class AnimationManager {
 
 	public void addDealerCard(Card card) {
 		int dealerCards = dealer.size();
-		
-		//When we actually get the second card, we quit early as a new card isn't added
-		if(dealerCards == 2 && secondDealerCardIsFaceDown) {
+
+		// When we actually get the second card, we quit early as a new card isn't added
+		if (dealerCards == 2 && secondDealerCardIsFaceDown) {
 			secondDealerCardIsFaceDown = false;
-			setFaceDownDealerCard(1,card);
+			setFaceDownDealerCard(1, card);
 			return;
 		}
-		
-		//When we get the hidden second card, flip the first card if it's hidden
-		if(dealerCards == 1) {
+
+		// When we get the hidden second card, flip the first card if it's hidden
+		if (dealerCards == 1) {
 			secondDealerCardIsFaceDown = true;
-			if(settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
-				setFaceDownDealerCard(0,dealerUpCard); //TODO delay this
+			if (settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
+				setFaceDownDealerCard(0, dealerUpCard); // TODO delay this
 			}
 		}
-		
-		if(dealerCards == 0 && settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
+
+		if (dealerCards == 0
+				&& settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
 			dealerUpCard = card;
 			card = null;
 		}
 
 		addNewDealerCard(card);
 	}
-	
+
 	private void addNewDealerCard(Card card) {
 		CardSprite cs = new CardSprite(card, DECK_ANCHOR, false);
 		cs.setDestination(getDealerCardLocation());
 		dealer.add(cs);
 	}
-	
+
 	private void setFaceDownDealerCard(int cardIndex, Card card) {
 		dealer.get(cardIndex).setTextureFromCard(card);
 	}
@@ -134,14 +137,14 @@ public class AnimationManager {
 	}
 
 	public void discardHand(HandSprite hs, int delayBeforeMoving) { // Called after a bust, and general clean up phase
-		hs.setDestinationForAllCards(SHOE_ANCHOR, delayBeforeMoving);
+		hs.setDestinationForAllCards(DISCARD_ANCHOR, delayBeforeMoving);
 		discard.addAll(hs.getCardSprites());
 		hs.clear();
 	}
 
 	public void discardDealer(int delayBeforeMoving) {
 		for (CardSprite cs : dealer) {
-			cs.setDestination(SHOE_ANCHOR);
+			cs.setDestination(DISCARD_ANCHOR);
 		}
 		discard.addAll(dealer);
 		dealer.clear();
