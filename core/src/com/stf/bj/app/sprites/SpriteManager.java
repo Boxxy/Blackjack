@@ -9,12 +9,14 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.sprites.AnimationSettings.FlipDealerCard;
 import com.stf.bj.app.table.Card;
 
 public class SpriteManager {
 
+	private final AppSettings settings;
 	private final List<CardSprite> dealer = new ArrayList<CardSprite>();
 	private final List<CardSprite> discard = new ArrayList<CardSprite>();
 	private final List<SpotSprite> players;
@@ -40,22 +42,20 @@ public class SpriteManager {
 	int delay = 0;
 	int delayThreshold = 0;
 	private String displayString = "";
-	private final AnimationSettings animationSettings;
-
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
 
-	public SpriteManager(SpriteBatch batch, List<Spot> spots, AnimationSettings animationSettings) {
+	public SpriteManager(SpriteBatch batch, List<Spot> spots, AppSettings settings) {
 		this.batch = batch;
-		this.animationSettings = animationSettings;
+		this.settings = settings;
 		players = new ArrayList<SpotSprite>();
 		Texture arrowTexture = new Texture(Gdx.files.internal("arrow.png"));
 		for (Spot s : spots) {
 			s.getSprite().setAnchor(SPOT_ANCHORS[s.getIndex()]);
 			players.add(s.getSprite());
 			s.getSprite().setArrowTexture(arrowTexture);
-			s.getSprite().setCardSpacing(animationSettings.getHoriziontalCardOffset(),
-					animationSettings.getVerticalCardOffset());
+			s.getSprite().setCardSpacing(settings.getAnimationSettings().getHoriziontalCardOffset(),
+					settings.getAnimationSettings().getVerticalCardOffset());
 		}
 		font = new BitmapFont();
 		bigFont = new BitmapFont();
@@ -122,12 +122,12 @@ public class SpriteManager {
 		//When we get the hidden second card, flip the first card if it's hidden
 		if(dealerCards == 1) {
 			secondDealerCardIsFaceDown = true;
-			if(animationSettings.getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
+			if(settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
 				setFaceDownDealerCard(0,dealerUpCard); //TODO delay this
 			}
 		}
 		
-		if(dealerCards == 0 && animationSettings.getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
+		if(dealerCards == 0 && settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
 			dealerUpCard = card;
 			card = null;
 		}
@@ -136,7 +136,7 @@ public class SpriteManager {
 	}
 	
 	private void addNewDealerCard(Card card) {
-		CardSprite cs = new CardSprite(card, DECK_ANCHOR);
+		CardSprite cs = new CardSprite(card, DECK_ANCHOR, false);
 		cs.setDestination(getDealerCardLocation());
 		dealer.add(cs);
 		movingSprites++;

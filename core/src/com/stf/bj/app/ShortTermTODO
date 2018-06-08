@@ -17,6 +17,8 @@ Animation/Graphical improvements
   Better Fonts
   Adding little "Hit", "Stay", "Shuffle" etc text pop ups to denote plays
   Adding shoe/discard images for penetration tracking
+  Chips should be their own sprites
+  Sprite sheet for cards instead of individual textures
   
 Bot names and slight personalities/speech bubbles
 

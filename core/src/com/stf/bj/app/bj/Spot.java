@@ -3,8 +3,10 @@ package com.stf.bj.app.bj;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.players.Human;
 import com.stf.bj.app.players.Player;
+import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.HandSprite;
 import com.stf.bj.app.sprites.SpotSprite;
 import com.stf.bj.app.table.Card;
@@ -19,16 +21,16 @@ public class Spot {
 	private String chipDisplay = "";
 	private final List<Hand> hands;
 	private final SpotSprite sprite;
-	private boolean inPlay = false;
 	int activeHands = 0;
 	private boolean bettingInsurance = false;
 	private boolean tookEvenMoney;
 
-	public Spot(int index, int hands) {
-		this.index = index;
-		this.hands = new ArrayList<Hand>(hands);
-		for (int hand = 0; hand < hands; hand++) {
-			this.hands.add(new Hand(this));
+	public Spot(int spotIndex, AppSettings settings) {
+		this.index = spotIndex;
+		int maxHands = settings.getTableRules().getSplits()+1;
+		this.hands = new ArrayList<Hand>(maxHands);
+		for (int hand = 0; hand < maxHands; hand++) {
+			this.hands.add(new Hand(this, settings));
 		}
 		
 		//setupSprites
@@ -38,6 +40,7 @@ public class Spot {
 			handSprites.add(h.getSprite());
 		}
 		sprite = new SpotSprite(this, handSprites);
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getIndex() {
@@ -172,7 +175,6 @@ public class Spot {
 	}
 
 	public void setInPlay(boolean inPlay) {
-		this.inPlay = inPlay;
 		if(inPlay==true) {
 			hands.get(0).setCurrentPlayingHand(true);
 		}else {
@@ -255,6 +257,11 @@ public class Spot {
 
 	public boolean tookEvenMoney() {
 		return tookEvenMoney;
+	}
+
+	public void setDoubled(int handIndex) {
+		addChips(handIndex, 1, true);
+		hands.get(handIndex).setDoubled();
 	}
 
 }

@@ -39,12 +39,12 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		TableRules rules = TableRules.getRandom();
-		bjManager = new BjManager(rules, AnimationSettings.getNew());
+		AppSettings settings = AppSettings.getRandom();
+		bjManager = new BjManager(settings);
 		Random r = new Random(System.currentTimeMillis());
-		int playerSpot = r.nextInt(rules.getSpots());
+		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
 		bjManager.addPlayer(playerSpot, PlayerType.HUMAN);
-		for(int spot = 0; spot < rules.getSpots(); spot++) {
+		for(int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
 			if(spot == playerSpot) {
 				continue;
 			}
@@ -53,7 +53,7 @@ public class BjApp extends ApplicationAdapter {
 		bjManager.openTable();
 
 		// Player manager is a at different level, should we really do it this way? TODO
-		spriteManager = new SpriteManager(batch, bjManager.getSpots(), bjManager.getAnimationSettings());
+		spriteManager = new SpriteManager(batch, bjManager.getSpots(), settings);
 
 		List<Ranks> ranks = new ArrayList<Ranks>();
 		ranks.add(Ranks.ACE);
@@ -62,7 +62,7 @@ public class BjApp extends ApplicationAdapter {
 		ranks.add(Ranks.TEN);
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
-		//bjManager.shadyShit(ranks);
+		bjManager.shadyShit(ranks);
 	}
 
 	@Override

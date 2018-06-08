@@ -3,6 +3,7 @@ package com.stf.bj.app.bj;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.players.BasicBot;
 import com.stf.bj.app.players.BasicCountingBot;
 import com.stf.bj.app.players.BasicIndexCountingBot;
@@ -14,6 +15,7 @@ import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.SpriteManager;
 import com.stf.bj.app.table.Card;
 import com.stf.bj.app.table.Event;
+import com.stf.bj.app.table.EventType;
 import com.stf.bj.app.table.Ranks;
 import com.stf.bj.app.table.Suits;
 import com.stf.bj.app.table.Table;
@@ -23,7 +25,6 @@ import com.stf.bj.app.table.TableRules.PayAndCleanPlayerBlackjack;
 public class BjManager {
 	private static final int BUST_TIMER_BASE = 150;
 	Table table;
-	private final TableRules rules;
 	int playerSpot = 0;
 	int timer = 0;
 	private static final int DEAL_TIMER_BASE = 150;
@@ -31,17 +32,16 @@ public class BjManager {
 	private static final int INSURANCE_TIMER_BASE = 300;
 	private static final int INSURANCE_TIMER_RESET = 100;
 	private final List<Spot> spots;
-	private final AnimationSettings animationSettings;
+	private final AppSettings settings;
 
 	boolean insuranceMode = false;
 
-	public BjManager(TableRules rules, AnimationSettings animationSettings) {
-		this.animationSettings = animationSettings;
-		table = new Table(rules);
-		this.rules = rules;
+	public BjManager(AppSettings settings) {
+		this.settings = settings;
+		table = new Table(settings.getTableRules());
 		spots = new ArrayList<Spot>();
-		for (int spotIndex = 0; spotIndex < rules.getSpots(); spotIndex++) {
-			spots.add(new Spot(spotIndex, rules.getSplits() + 1));
+		for (int spotIndex = 0; spotIndex < settings.getTableRules().getSpots(); spotIndex++) {
+			spots.add(new Spot(spotIndex, settings));
 		}
 	}
 
@@ -198,7 +198,7 @@ public class BjManager {
 			sm.setDelay(BUST_TIMER_BASE);
 			return true;
 		case SPOT_GAINED_CARD:
-			spots.get(e.getSpotIndex()).addCard(e.getCard(), e.getHandIndex());
+			spot.addCard(e.getCard(), e.getHandIndex());
 			sm.addMovingSprite(1);
 			return true;
 		case SPOT_SPLIT:
@@ -215,7 +215,10 @@ public class BjManager {
 			spot.ontoNextHand();
 			return false;
 		case WIN_BLACKJACK:
-			if (rules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START && !spot.tookEvenMoney()) {
+			if(!spot.tookEvenMoney()) {
+				spot.addChips(e.getHandIndex(), EventType.WIN_BLACKJACK.getPayout(), false);
+			}
+			if (settings.getTableRules().getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
 				spot.clearCards();
 				sm.discardSpot(spot.getSprite());
 				return true;
@@ -223,7 +226,7 @@ public class BjManager {
 				return false;
 			}
 		case SPOT_DOUBLE:
-			spot.addChips(e.getHandIndex(), 1, true);
+			spot.setDoubled(e.getHandIndex());
 			return false;
 		default:
 			if (e.getType().isPayout()) {
@@ -246,16 +249,8 @@ public class BjManager {
 		}
 	}
 
-	public TableRules getRules() {
-		return rules;
-	}
-
 	public List<Spot> getSpots() {
 		return spots;
-	}
-
-	public AnimationSettings getAnimationSettings() {
-		return animationSettings;
 	}
 
 	public void addPlayer(int spotIndex, PlayerType pt) {
@@ -263,13 +258,13 @@ public class BjManager {
 		Spot spot = spots.get(spotIndex);
 		switch (pt) {
 		case BASIC_BOT:
-			p = new BasicBot(rules);
+			p = new BasicBot(settings.getTableRules());
 			break;
 		case BASIC_COUNTING_BOT:
-			p = new BasicCountingBot(rules);
+			p = new BasicCountingBot(settings.getTableRules());
 			break;
 		case BASIC_INDEX_COUNTING_BOT:
-			p = new BasicIndexCountingBot(rules);
+			p = new BasicIndexCountingBot(settings.getTableRules());
 			break;
 		case HUMAN:
 			p = new Human();
@@ -362,7 +357,7 @@ public class BjManager {
 		boolean newPlay = s.getPlayer().getInsurancePlay();
 		boolean oldPlay = s.isBettingInsurance();
 
-		if (animationSettings.isImmediatelyPayEvenMoney() && newPlay && s.isBlackjack()) {
+		if (settings.getAnimationSettings().isImmediatelyPayEvenMoney() && newPlay && s.isBlackjack()) {
 			payTakeEvenMoney(sm, s);
 			return true;
 		}

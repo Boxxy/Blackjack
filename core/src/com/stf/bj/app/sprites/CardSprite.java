@@ -5,12 +5,15 @@ import com.stf.bj.app.table.Card;
 
 public class CardSprite extends Sprite{
 
-	public CardSprite(Card card, Vector2 location) {
+	private final boolean doubled;
+
+	public CardSprite(Card card, Vector2 location, boolean doubled) {
 		super();
 		setTextureFromCard(card);
 		setLocation(location);
 		setVisible(true);
-		setVelocity(12f);
+		setVelocity(18f);
+		this.doubled = doubled;
 	}
 
 	private String getPathFromCard(Card c) {
@@ -84,6 +87,10 @@ public class CardSprite extends Sprite{
 
 	public void setTextureFromCard(Card card) {
 		setTexture(getPathFromCard(card));
+	}
+
+	public boolean isDoubled() {
+		return doubled;
 	}
 
 }

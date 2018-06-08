@@ -9,13 +9,9 @@ public class AnimationSettings {
 	}
 
 	private final FlipDealerCard flipDealerCard;
-	
-	
-	private final boolean doubleCardSideways; //TODO
-	
-	private final float horiziontalCardOffset; //TODO
-	private final float verticalCardOffset; //TODO
-	
+	private final boolean doubleCardSideways;
+	private final float horiziontalCardOffset;
+	private final float verticalCardOffset; 
 	private final boolean immediatelyPayEvenMoney;
 	
 	/**
@@ -70,11 +66,11 @@ public class AnimationSettings {
 		return new AnimationSettings(FlipDealerCard.AFTER_SECOND_CARD, true, 13f, 30f, true);
 	}
 
-	public static AnimationSettings getTest1() {
+	public static AnimationSettings getTestNew() {
 		return new AnimationSettings(FlipDealerCard.AFTER_SECOND_CARD, true, 0f, -20f, true);
 	}
 	
-	public static AnimationSettings getTest2() {
+	public static AnimationSettings getTestClassic() {
 		return new AnimationSettings(FlipDealerCard.IMMEDIATELY, false, 0f, -20f, false);
 	}
 	
@@ -86,9 +82,9 @@ public class AnimationSettings {
 		}else if (i == 1) {
 			return getNew();
 		}else if (i == 2) {
-			return getTest1();
+			return getTestNew();
 		}else if (i == 3) {
-			return getTest2();
+			return getTestClassic();
 		}
 		
 		return getNew();

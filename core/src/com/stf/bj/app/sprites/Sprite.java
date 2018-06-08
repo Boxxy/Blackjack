@@ -3,21 +3,25 @@ package com.stf.bj.app.sprites;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Sprite {
-	private Texture texture;
+	private TextureRegion texture;
 	private Vector2 location = new Vector2(0, 0);
 	private Vector2 destination = new Vector2(0, 0);
 
 	private float velocity = 12f;
 	private boolean visible, moving;
+	private float rotation = 0;
+	private float targetRotation = 0;
+	private float rotationalVelocity;
 
 	public Sprite() {
 	}
 
 	public void setTexture(String path) {
-		texture = new Texture(Gdx.files.internal(path));
+		texture = new TextureRegion(new Texture(Gdx.files.internal(path)));
 	}
 
 	public void setVisible(boolean v) {
@@ -34,11 +38,26 @@ public class Sprite {
 	}
 
 	public void setDestination(Vector2 v) {
+		setDestination(v, 0f);
+	}
+	
+	public void setDestination(Vector2 v, float targetRotation) {
 		destination.x = v.x;
 		destination.y = v.y;
 		moving = true;
-		if(velocity <= 0f) {
+		if (velocity <= 0f) {
 			location = destination;
+			rotation = targetRotation;
+			rotationalVelocity = 0;
+			return;
+		}
+		
+		this.targetRotation = targetRotation;
+		float rotationalDifference = targetRotation - rotation;
+		if(rotationalDifference != 0) {
+			float distance = location.dst(destination);
+			float time = Math.abs(distance/velocity);
+			rotationalVelocity = rotationalDifference / (time - 1f);
 		}
 	}
 
@@ -61,14 +80,15 @@ public class Sprite {
 	}
 
 	protected void render(SpriteBatch batch) {
-		batch.draw(texture, location.x, location.y);
+		batch.draw(texture, location.x, location.y, 0f, 0f, texture.getRegionWidth(), texture.getRegionHeight(), 1f, 1f, rotation);
 	}
 
 	protected boolean updateLocation() {
 		float distance = location.dst(destination);
-		if (distance < velocity) {
+		if (distance <= velocity) {
 			location.x = destination.x;
 			location.y = destination.y;
+			rotation = targetRotation;
 			moving = false;
 			return true;
 		}
@@ -76,6 +96,14 @@ public class Sprite {
 		wayToGo.sub(location);
 		wayToGo.limit(velocity);
 		location.add(wayToGo);
+		
+		float rotationalDifference = targetRotation - rotation;
+		if(Math.abs(rotationalDifference) < Math.abs(rotationalVelocity)) {
+			rotation = targetRotation;
+		}else {
+			rotation += rotationalVelocity;
+		}
+		
 		return false;
 	}
 }

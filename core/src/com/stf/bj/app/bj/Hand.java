@@ -1,5 +1,7 @@
 package com.stf.bj.app.bj;
 
+import com.stf.bj.app.AppSettings;
+import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.HandSprite;
 import com.stf.bj.app.table.Card;
 
@@ -11,13 +13,14 @@ public class Hand {
 	private final com.stf.bj.app.table.Hand hand;
 	private int actualIndex;
 	private boolean currentPlayingHand = false;
-	
-	public Hand(Spot spot) {
-		sprite = new HandSprite(this);
+	private boolean doubled = false;
+
+	public Hand(Spot spot, AppSettings settings) {
+		sprite = new HandSprite(this, settings);
 		this.spot = spot;
 		this.hand = new com.stf.bj.app.table.Hand();
 	}
-	
+
 	public double getChipStacks() {
 		return chipStacks;
 	}
@@ -31,7 +34,6 @@ public class Hand {
 		updateDisplayString(wager);
 		return stacks * wager;
 	}
-	
 
 	private void updateDisplayString(double wager) {
 		if (chipStacks == 0) {
@@ -54,7 +56,7 @@ public class Hand {
 
 	public void addCard(Card card) {
 		hand.addCard(card);
-		sprite.addCard(card);
+		sprite.addCard(card, doubled);
 	}
 
 	public Spot getSpot() {
@@ -68,7 +70,7 @@ public class Hand {
 	public void setActualIndex(int actualIndex) {
 		this.actualIndex = actualIndex;
 	}
-	
+
 	public int getActualIndex() {
 		return actualIndex;
 	}
@@ -84,17 +86,22 @@ public class Hand {
 	public void clearCards() {
 		hand.clearHand();
 		actualIndex = 0;
+		doubled = false;
 	}
 
 	public boolean isTheCurrentPlayingHand() {
-		return currentPlayingHand ;
+		return currentPlayingHand;
 	}
-	
+
 	public void setCurrentPlayingHand(boolean currentPlayingHand) {
 		this.currentPlayingHand = currentPlayingHand;
 	}
 
 	public boolean isBlackjack() {
 		return hand.isBlackjack();
+	}
+
+	public void setDoubled() {
+		doubled = true;
 	}
 }
