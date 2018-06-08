@@ -24,13 +24,11 @@ public class SpotSprite {
 		this.handSprites = handSprites;
 	}
 
-	public int tick(SpriteBatch batch, BitmapFont font) {
-		int finishedSprites = 0;
+	public void tick(SpriteBatch batch, BitmapFont font) {
 		for (HandSprite hs : handSprites) {
-			finishedSprites += hs.tick(batch, font);
+			hs.tick(batch, font);
 		}
 		drawMoney(batch, font);
-		return finishedSprites;
 	}
 
 	private void drawMoney(SpriteBatch batch, BitmapFont font) {
@@ -54,16 +52,15 @@ public class SpotSprite {
 
 	public void resetHandAnchors() {
 		for (HandSprite hs : handSprites) {
-			hs.setAnchor(anchor);
+			hs.setAnchor(anchor, 0);
 		}
 	}
 
-	public int updateHandAnchors() {
+	public void updateHandAnchors(int delayBeforeMoving) {
 		int activeHands = spot.getActiveHands();
 		if (activeHands == 0)
-			return 0;
+			return;
 
-		int spritesMoved = 0;
 		for (HandSprite hs : handSprites) {
 			if (!hs.getHand().hasCards()) {
 				continue;
@@ -71,9 +68,9 @@ public class SpotSprite {
 			// only 1 hand should have a handAnchor = spotAnchor
 			float x = (activeHands - 1) * HAND_SPACING_X;
 			x += hs.getHand().getActualIndex() * -HAND_SPACING_X * 2;
-			spritesMoved += hs.setAnchor(new Vector2(anchor.x + x, anchor.y));
+			hs.setAnchor(new Vector2(anchor.x + x, anchor.y), delayBeforeMoving);
 		}
-		return spritesMoved;
+		return;
 	}
 
 	public List<HandSprite> getHandSprites() {

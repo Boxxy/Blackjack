@@ -14,47 +14,34 @@ public class Timer {
 	public int getDelayForEventType(EventType eventType){
 		switch(eventType) {
 		case DEALER_BLACKJACK:
-			return settings.getEventDelay();
 		case DEALER_BUSTED:
-			return settings.getEventDelay();
+			return 0;
 		case DEALER_GAINED_CARD:
-			return settings.getEventDelay();
 		case DEALER_GAINED_FACE_DOWN_CARD:
-			return settings.getEventDelay();
-		case DECK_SHUFFLED:
-			return settings.getEventDelay();
-		case INSURANCE_COLLECTED:
-			return settings.getEventDelay();
-		case INSURANCE_PAID:
-			return settings.getEventDelay();
-		case LOSE:
-			return settings.getEventDelay();
-		case LOSE_DOUBLE:
-			return settings.getEventDelay();
-		case LOSE_HALF:
-			return settings.getEventDelay();
-		case PLAYER_BUSTED:
-			return settings.getEventDelay();
-		case PUSH:
-			return settings.getEventDelay();
-		case SPOT_DOUBLE:
-			return settings.getEventDelay();
+			return settings.getDealerCardDelay();
 		case SPOT_GAINED_CARD:
-			return settings.getEventDelay();
-		case SPOT_HIT:
-			return settings.getEventDelay();
-		case SPOT_SPLIT:
-			return settings.getEventDelay();
-		case SPOT_STAND:
-			return settings.getEventDelay();
-		case SPOT_SURRENDER:
-			return settings.getEventDelay();
+			return settings.getPlayerCardDelay();
+		case DECK_SHUFFLED:
+			return settings.getShuffleDelay();
+		case INSURANCE_COLLECTED:
+		case INSURANCE_PAID:
+			return 0;
+		case LOSE:
+		case LOSE_DOUBLE:
+		case LOSE_HALF:
+		case PUSH:
 		case WIN:
-			return settings.getEventDelay();
 		case WIN_BLACKJACK:
-			return settings.getEventDelay();
 		case WIN_DOUBLE:
-			return settings.getEventDelay();
+			return settings.getPayOutDelay();
+		case PLAYER_BUSTED:
+			return settings.getBustDelay();
+		case SPOT_DOUBLE:
+		case SPOT_HIT:
+		case SPOT_SPLIT:
+		case SPOT_STAND:
+		case SPOT_SURRENDER:
+			return settings.getPlayDelay();
 		default:
 			return 0;
 		}

@@ -73,8 +73,8 @@ public class Table {
 		if (!canOpenTable())
 			throw new IllegalStateException("Can't Open Table");
 		state = TableStates.IDLE;
-		registerEvent(new Event(EventType.TABLE_OPENED));
 		shuffle();
+		registerEvent(new Event(EventType.TABLE_OPENED));
 	}
 
 	private boolean canShuffle() {
@@ -175,10 +175,10 @@ public class Table {
 			dealerTurn();
 		payOut();
 		cleanUpCards();
-		registerEvent(new Event(EventType.TABLE_OPENED));
 		state = TableStates.IDLE;
 		if (shoe.needsShuffle())
 			shuffle();
+		registerEvent(new Event(EventType.TABLE_OPENED));
 	}
 
 	/**

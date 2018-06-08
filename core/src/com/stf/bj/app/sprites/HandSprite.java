@@ -33,18 +33,14 @@ public class HandSprite {
 		cardSprites = new ArrayList<CardSprite>();
 	}
 
-	public int tick(SpriteBatch batch, BitmapFont font) {
-		int spritesFinished = 0;
-		for(CardSprite cs : cardSprites) {
-			if (cs.tick(batch)) {
-				spritesFinished++;
-			}
+	public void tick(SpriteBatch batch, BitmapFont font) {
+		for (CardSprite cs : cardSprites) {
+			cs.tick(batch);
 		}
 		drawMoney(batch, font);
-		if(hand.isTheCurrentPlayingHand()) {
+		if (hand.isTheCurrentPlayingHand()) {
 			drawArrow(batch);
 		}
-		return spritesFinished;
 	}
 
 	private void drawArrow(SpriteBatch batch) {
@@ -53,10 +49,9 @@ public class HandSprite {
 		batch.draw(arrowTexture, anchor.x + x, anchor.y + y);
 	}
 
-	private void drawMoney(SpriteBatch batch,BitmapFont font) {
+	private void drawMoney(SpriteBatch batch, BitmapFont font) {
 		float y = MONEY_HAND_OFFSET_Y;
 
-		
 		font.draw(batch, hand.getChipDisplay(), anchor.x, anchor.y + y);
 	}
 
@@ -66,37 +61,35 @@ public class HandSprite {
 
 	public void addCard(Card card, boolean doubled) {
 		float rotation = 0f;
-		if(doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
+		if (doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
 			rotation = 90f;
 		}
-		
-		CardSprite cs = new CardSprite(card, SpriteManager.DECK_ANCHOR, doubled);
+
+		CardSprite cs = new CardSprite(card, AnimationManager.DECK_ANCHOR, doubled);
 		cs.setVelocity(settings.getTimingSettings().getCardSpeed());
 		cs.setDestination(getPlayerCardLocation(hand.getSize() - 1, doubled), rotation);
 		cardSprites.add(cs);
 	}
 
 	private Vector2 getPlayerCardLocation(int cardIndex, boolean doubled) {
-		if(cardIndex < 0) {
+		if (cardIndex < 0) {
 			throw new IllegalStateException();
 		}
 		float x = settings.getAnimationSettings().getHoriziontalCardOffset() * cardIndex;
 		float y = settings.getAnimationSettings().getVerticalCardOffset() * cardIndex;
-		
-		if(doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
+
+		if (doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
 			x += DOUBLED_CARD_OFFSET_X;
 			y += DOUBLED_CARD_OFFSET_Y;
-			if(settings.getAnimationSettings().getHoriziontalCardOffset() == 0) {
-				x += (CARD_WIDTH - CARD_HEIGHT)/2 + .5f ;
+			if (settings.getAnimationSettings().getHoriziontalCardOffset() == 0) {
+				x += (CARD_WIDTH - CARD_HEIGHT) / 2 + .5f;
 			}
 		}
-		
-		if(settings.getAnimationSettings().getVerticalCardOffset() < 0) {
+
+		if (settings.getAnimationSettings().getVerticalCardOffset() < 0) {
 			y -= settings.getAnimationSettings().getVerticalCardOffset() * 5;
 		}
-		
-		
-		
+
 		return new Vector2(anchor.x + x, anchor.y + y);
 	}
 
@@ -104,30 +97,28 @@ public class HandSprite {
 		return hand;
 	}
 
-	public int setAnchor(Vector2 anchor) {
+	public void setAnchor(Vector2 anchor, int delayBeforeMoving) {
 		this.anchor = anchor;
-		return updateCardSpriteLocations();
+		updateCardSpriteLocations(delayBeforeMoving);
 	}
 
-	private int updateCardSpriteLocations() {
-		for(int cardIndex = 0; cardIndex < cardSprites.size(); cardIndex++) {
+	private void updateCardSpriteLocations(int delayBeforeMoving) {
+		for (int cardIndex = 0; cardIndex < cardSprites.size(); cardIndex++) {
 			CardSprite cs = cardSprites.get(cardIndex);
 			cs.setDestination(getPlayerCardLocation(cardIndex, cs.isDoubled()));
+			cs.addDelay(delayBeforeMoving);
 		}
-		return cardSprites.size();
 	}
 
 	public int size() {
 		return cardSprites.size();
 	}
 
-	public int setDestinationForAllCards(Vector2 destination) {
-		int spritesMoved = 0;
-		for(CardSprite cs : cardSprites) {
+	public void setDestinationForAllCards(Vector2 destination, int delayBeforeMoving) {
+		for (CardSprite cs : cardSprites) {
 			cs.setDestination(destination);
-			spritesMoved++;
+			cs.addDelay(delayBeforeMoving);
 		}
-		return spritesMoved;
 	}
 
 	public List<CardSprite> getCardSprites() {

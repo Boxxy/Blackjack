@@ -14,7 +14,7 @@ import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.sprites.AnimationSettings.FlipDealerCard;
 import com.stf.bj.app.table.Card;
 
-public class SpriteManager {
+public class AnimationManager {
 
 	private final AppSettings settings;
 	private final List<CardSprite> dealer = new ArrayList<CardSprite>();
@@ -24,7 +24,7 @@ public class SpriteManager {
 	private static final float DEALER_CARD_SPACING_X = 80f;
 	private static final float SPOT_Y = 200f;
 	private static final float EDGE_SPOT_Y = 300f;
-	public static final Vector2 DECK_ANCHOR = new Vector2(1000f, 600f);
+	public static final Vector2 DECK_ANCHOR = new Vector2(600f, 600f);
 	public static final Vector2 SHOE_ANCHOR = new Vector2(100f, 600f);
 	private static final Vector2 MIDDLE_TEXT_ANCHOR = new Vector2(500f, 400f);
 	private static final Vector2 DEALER_ANCHOR = new Vector2(800f, 600f);
@@ -38,12 +38,11 @@ public class SpriteManager {
 			SPOT_4_ANCHOR, SPOT_5_ANCHOR };
 	private final BitmapFont font;
 	private final BitmapFont bigFont;
-	int movingSprites = 0;
 	private String displayString = "";
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
 
-	public SpriteManager(SpriteBatch batch, List<Spot> spots, AppSettings settings) {
+	public AnimationManager(SpriteBatch batch, List<Spot> spots, AppSettings settings) {
 		this.batch = batch;
 		this.settings = settings;
 		players = new ArrayList<SpotSprite>();
@@ -69,26 +68,19 @@ public class SpriteManager {
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
 
 		for (CardSprite cs : dealer) {
-			if (cs.tick(batch))
-				movingSprites--;
+			cs.tick(batch);
 		}
 
 		for (CardSprite cs : discard) {
-			if (cs.tick(batch))
-				movingSprites--;
+			cs.tick(batch);
 		}
 
 		for (SpotSprite ss : players) {
-			movingSprites -= ss.tick(batch, font);
+			ss.tick(batch, font);
 
-		}
-
-		if (movingSprites < 0) {
-			throw new IllegalStateException("Lost track of some sprites");
 		}
 
 		batch.end();
-
 	}
 
 	public void addDealerCard(Card card) {
@@ -121,7 +113,6 @@ public class SpriteManager {
 		CardSprite cs = new CardSprite(card, DECK_ANCHOR, false);
 		cs.setDestination(getDealerCardLocation());
 		dealer.add(cs);
-		movingSprites++;
 	}
 	
 	private void setFaceDownDealerCard(int cardIndex, Card card) {
@@ -136,22 +127,21 @@ public class SpriteManager {
 		discard.clear();
 	}
 
-	public void discardSpot(SpotSprite ss) {
+	public void discardSpot(SpotSprite ss, int delayBeforeMoving) {
 		for (HandSprite hs : ss.getHandSprites()) {
-			discardHand(hs);
+			discardHand(hs, delayBeforeMoving);
 		}
 	}
 
-	public void discardHand(HandSprite hs) { // Called after a bust, and general clean up phase
-		movingSprites += hs.setDestinationForAllCards(SHOE_ANCHOR);
+	public void discardHand(HandSprite hs, int delayBeforeMoving) { // Called after a bust, and general clean up phase
+		hs.setDestinationForAllCards(SHOE_ANCHOR, delayBeforeMoving);
 		discard.addAll(hs.getCardSprites());
 		hs.clear();
 	}
 
-	public void discardDealer() {
+	public void discardDealer(int delayBeforeMoving) {
 		for (CardSprite cs : dealer) {
 			cs.setDestination(SHOE_ANCHOR);
-			movingSprites++;
 		}
 		discard.addAll(dealer);
 		dealer.clear();
@@ -166,24 +156,19 @@ public class SpriteManager {
 		return new Vector2(DEALER_ANCHOR.x + x, DEALER_ANCHOR.y);
 	}
 
-	public void discardAllSprites() {
+	public void discardAllSprites(int delayBeforeMoving) {
 		for (SpotSprite ss : players) {
-			discardSpot(ss);
+			discardSpot(ss, delayBeforeMoving);
 		}
-		discardDealer();
+		discardDealer(delayBeforeMoving);
 	}
 
 	public void setDisplayString(String s) {
 		displayString = s;
 	}
 
-	public void addMovingSprite(int spritesMoved) {
-		movingSprites += spritesMoved;
-
-	}
-
-	public void updateHandPlacements(SpotSprite spotSprite) {
-		movingSprites += spotSprite.updateHandAnchors();
+	public void updateHandPlacements(SpotSprite spotSprite, int delayBeforeMoving) {
+		spotSprite.updateHandAnchors(delayBeforeMoving);
 	}
 
 }

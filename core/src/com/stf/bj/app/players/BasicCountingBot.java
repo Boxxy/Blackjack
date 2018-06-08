@@ -1,5 +1,6 @@
 package com.stf.bj.app.players;
 
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
 import com.stf.bj.app.table.TableRules;
@@ -10,9 +11,9 @@ public class BasicCountingBot extends BasicBot {
 	int penetration;
 	int totalCards;
 
-	public BasicCountingBot(TableRules rules) {
-		super(rules);
-		totalCards = rules.getDecks() * 52;
+	public BasicCountingBot(AppSettings settings) {
+		super(settings);
+		totalCards = settings.getTableRules().getDecks() * 52;
 	}
 
 	@Override

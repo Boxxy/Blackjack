@@ -16,6 +16,8 @@ public class Sprite {
 	private float rotation = 0;
 	private float targetRotation = 0;
 	private float rotationalVelocity;
+	
+	private int delay;
 
 	public void setTexture(String path) {
 		texture = new TextureRegion(new Texture(Gdx.files.internal(path)));
@@ -62,17 +64,14 @@ public class Sprite {
 		velocity = v;
 	}
 
-	public boolean tick(SpriteBatch batch) {
-
-		boolean stoppedMoving = false;
+	public void tick(SpriteBatch batch) {
 		if (!visible) {
-			return false;
+			return;
 		}
 		if (moving) {
-			stoppedMoving = updateLocation();
+			updateLocation();
 		}
 		render(batch);
-		return stoppedMoving;
 	}
 
 	protected void render(SpriteBatch batch) {
@@ -81,6 +80,10 @@ public class Sprite {
 	}
 
 	protected boolean updateLocation() {
+		if(delay > 0) {
+			delay--;
+			return false;
+		}
 		float distance = location.dst(destination);
 		if (distance <= velocity) {
 			location.x = destination.x;
@@ -102,5 +105,9 @@ public class Sprite {
 		}
 
 		return false;
+	}
+	
+	public void addDelay(int delay) {
+		this.delay = delay;
 	}
 }

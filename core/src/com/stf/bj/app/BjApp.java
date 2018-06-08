@@ -14,7 +14,7 @@ import com.stf.bj.app.bj.BjManager;
 import com.stf.bj.app.players.PlayerType;
 import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.CardSprite;
-import com.stf.bj.app.sprites.SpriteManager;
+import com.stf.bj.app.sprites.AnimationManager;
 import com.stf.bj.app.table.Ranks;
 import com.stf.bj.app.table.TableRules;
 
@@ -22,7 +22,7 @@ public class BjApp extends ApplicationAdapter {
 	SpriteBatch batch;
 	private OrthographicCamera camera;
 	private BjManager bjManager;
-	SpriteManager spriteManager;
+	AnimationManager spriteManager;
 	boolean everyOtherClick;
 	CardSprite lastSprite;
 	boolean mouseDown;
@@ -53,7 +53,7 @@ public class BjApp extends ApplicationAdapter {
 		bjManager.openTable();
 
 		// Player manager is a at different level, should we really do it this way? TODO
-		spriteManager = new SpriteManager(batch, bjManager.getSpots(), settings);
+		spriteManager = new AnimationManager(batch, bjManager.getSpots(), settings);
 
 		List<Ranks> ranks = new ArrayList<Ranks>();
 		ranks.add(Ranks.ACE);

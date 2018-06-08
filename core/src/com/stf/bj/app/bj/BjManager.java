@@ -13,7 +13,7 @@ import com.stf.bj.app.players.Play;
 import com.stf.bj.app.players.Player;
 import com.stf.bj.app.players.PlayerType;
 import com.stf.bj.app.sprites.AnimationSettings;
-import com.stf.bj.app.sprites.SpriteManager;
+import com.stf.bj.app.sprites.AnimationManager;
 import com.stf.bj.app.sprites.Timer;
 import com.stf.bj.app.table.Card;
 import com.stf.bj.app.table.Event;
@@ -61,7 +61,7 @@ public class BjManager {
 		table.openTable();
 	}
 
-	public void tick(SpriteManager sm) {
+	public void tick(AnimationManager sm) {
 
 		if(timer.hasDelay()) {
 			timer.tickDelay();
@@ -136,7 +136,7 @@ public class BjManager {
 		}
 	}
 
-	public void processEvents(SpriteManager sm) {
+	public void processEvents(AnimationManager sm) {
 		while (table.hasNewEvent() && !timer.hasDelay()) {
 			Event e = table.grabLastEvent();
 			System.out.println("Processed " + Gdx.graphics.getFrameId() + " " + e);
@@ -158,32 +158,32 @@ public class BjManager {
 		}
 	}
 
-	private void processTableEvent(SpriteManager sm, Event e) {
+	private void processTableEvent(AnimationManager animationManager, Event e) {
 		switch (e.getType()) {
 		case DEALER_GAINED_CARD:
-			sm.addDealerCard(e.getCard());
+			animationManager.addDealerCard(e.getCard());
 			break;
 		case DEALER_GAINED_FACE_DOWN_CARD:
-			sm.addDealerCard(null);
+			animationManager.addDealerCard(null);
 			break;
 		case DEAL_STARTED:
 			gamePhase = GamePhase.OTHER;
-			sm.setDisplayString("");
-			sm.newDeal();
+			animationManager.setDisplayString("");
+			animationManager.newDeal();
 			break;
 		case DEALER_ENDED_TURN:
 			break;
 		case TABLE_OPENED:
 			gamePhase = GamePhase.WAGER;
-			sm.setDisplayString("Place your bets!");
+			animationManager.setDisplayString("Place your bets!");
 			for (Spot s : spots) {
 				s.clearCards();
 			}
-			sm.discardAllSprites();
+			animationManager.discardAllSprites(0);
 			break;
 		case INSURANCE_OFFERED:
 			gamePhase = GamePhase.INSURANCE;
-			sm.setDisplayString("Insurance / even money?");
+			animationManager.setDisplayString("Insurance / even money?");
 			break;
 		case INSURANCE_PAID:
 			gamePhase = GamePhase.OTHER;
@@ -199,25 +199,27 @@ public class BjManager {
 		case PLAY_FINISHED:
 			gamePhase = GamePhase.OTHER;
 			break;
+		case DECK_SHUFFLED:
+			animationManager.setDisplayString("Shuffling");
+			break;
 		default:
 			break;
 		}
 	}
 
-	private void processSpotEvent(SpriteManager sm, Event e, Spot spot) {
+	private void processSpotEvent(AnimationManager sm, Event e, Spot spot) {
 		switch (e.getType()) {
 		case PLAYER_BUSTED:
 			spot.addBust(e.getHandIndex());
-			sm.discardHand(spot.getHand(e.getHandIndex()).getSprite());
-			sm.updateHandPlacements(spot.getSprite());
+			sm.discardHand(spot.getHand(e.getHandIndex()).getSprite(), settings.getTimingSettings().getBustDelay());
+			sm.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getBustDelay());
 			break;
 		case SPOT_GAINED_CARD:
 			spot.addCard(e.getCard(), e.getHandIndex());
-			sm.addMovingSprite(1);
 			break;
 		case SPOT_SPLIT:
 			spot.addSplit(e.getHandIndex());
-			sm.updateHandPlacements(spot.getSprite());
+			sm.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
 			break;
 		case SPOT_STARTED_PLAY:
 			spot.setInPlay(true);
@@ -234,7 +236,7 @@ public class BjManager {
 			}
 			if (settings.getTableRules().getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
 				spot.clearCards();
-				sm.discardSpot(spot.getSprite());
+				sm.discardSpot(spot.getSprite(), settings.getTimingSettings().getPayOutDelay());
 			}
 			break;
 		case SPOT_DOUBLE:
@@ -266,13 +268,13 @@ public class BjManager {
 		Spot spot = spots.get(spotIndex);
 		switch (pt) {
 		case BASIC_BOT:
-			p = new BasicBot(settings.getTableRules());
+			p = new BasicBot(settings);
 			break;
 		case BASIC_COUNTING_BOT:
-			p = new BasicCountingBot(settings.getTableRules());
+			p = new BasicCountingBot(settings);
 			break;
 		case BASIC_INDEX_COUNTING_BOT:
-			p = new BasicIndexCountingBot(settings.getTableRules());
+			p = new BasicIndexCountingBot(settings);
 			break;
 		case HUMAN:
 			p = new Human();
@@ -347,7 +349,7 @@ public class BjManager {
 		return true;
 	}
 
-	private boolean updateInsurances(SpriteManager sm) {
+	private boolean updateInsurances(AnimationManager sm) {
 		boolean updated = false;
 		for (Spot s : spots) {
 			if (s.getPlayer() == null)
@@ -361,7 +363,7 @@ public class BjManager {
 		return updated;
 	}
 
-	private boolean updateInsurance(SpriteManager sm, Spot s) {
+	private boolean updateInsurance(AnimationManager sm, Spot s) {
 		boolean newPlay = s.getPlayer().getInsurancePlay();
 		boolean oldPlay = s.isBettingInsurance();
 
@@ -378,10 +380,10 @@ public class BjManager {
 		}
 	}
 
-	private void payTakeEvenMoney(SpriteManager sm, Spot s) {
+	private void payTakeEvenMoney(AnimationManager sm, Spot s) {
 		s.addChips(0, 1, false);
 		s.setTookEvenMoney();
-		sm.discardSpot(s.getSprite());
+		sm.discardSpot(s.getSprite(), settings.getTimingSettings().getPayOutDelay());
 	}
 
 	private void payoutInsurance() {

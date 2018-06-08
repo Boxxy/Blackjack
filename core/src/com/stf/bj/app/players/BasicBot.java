@@ -2,6 +2,7 @@ package com.stf.bj.app.players;
 
 import java.util.Random;
 
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.players.strategy.BaseHoChunkStrategy;
 import com.stf.bj.app.players.strategy.Strategy;
 import com.stf.bj.app.table.Event;
@@ -18,15 +19,17 @@ public class BasicBot implements Player {
 	int timesSplit = 0;
 	int splits;
 	int delay = 0;
-	int maxDelay;
-	private final Random r;
+	protected final int maxDelay;
 
-	public BasicBot(TableRules rules){
-		this.splits = rules.getSplits();
+	public BasicBot(AppSettings settings){
+		this.splits = settings.getTableRules().getSplits();
 		handTotals = new int[splits + 1];
 		handAces = new boolean[splits + 1];
-		r = new Random();
+		Random r = new Random();
 		setStrategy(new BaseHoChunkStrategy());
+		int delayFromSettings = settings.getTimingSettings().getBaseBotDelay();
+		//maxDelay = delayFromSettings/2 + r.nextInt(delayFromSettings * 2);
+		maxDelay = delayFromSettings;
 	}
 	
 	public void setStrategy(Strategy strategy) {
@@ -90,20 +93,15 @@ public class BasicBot implements Player {
 			return;
 		if (e.getType() == EventType.DEAL_STARTED) {
 			reset();
-			maxDelay = r.nextInt(120) + 10;
 		} else if (e.getType() == EventType.DEALER_GAINED_CARD) {
 			if (dealerUpCardValue < 1) {
 				dealerUpCardValue = e.getCard().getValue();
 			}
 		} else if (e.getType() == EventType.SPOT_GAINED_CARD) {
 			addCardToHand(e.getCard().getValue(), e.getHandIndex());
-			maxDelay = r.nextInt(120) + 10;
 		} else if (e.getType() == EventType.SPOT_SPLIT) {
 			addSplit(e.getHandIndex());
-		} else if (e.getType() == EventType.DEALER_ENDED_TURN) {
-
-			maxDelay = r.nextInt(60) + 20;
-		}
+		} 
 	}
 
 	private void addCardToHand(int value, int handIndex) {
