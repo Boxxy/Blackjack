@@ -28,7 +28,7 @@ public class Table {
 	 * bets on the table) Play (Cards on the table)
 	 */
 	public enum TableStates {
-		CLOSED, IDLE, READY_TO_DEAL, PLAY;
+		CLOSED, IDLE, READY_TO_DEAL,INSURANCE, PLAY;
 	}
 
 	private Shoe shoe;
@@ -110,23 +110,28 @@ public class Table {
 	}
 
 	public void startDeal() {
-		boolean insuranceOffered = false;
 		if (!canStartDeal())
 			throw new IllegalStateException("Can't Start Deal");
 		registerEvent(new Event(EventType.DEAL_STARTED));
 		deal();
 		if (dealer.getCard(0).isAce()) {
 			registerEvent(new Event(EventType.INSURANCE_OFFERED));
-			insuranceOffered = true;
+			state = TableStates.INSURANCE;
+			return;
 		}
+		startPlay();
+	}
+	
+	private void startPlay() {
+
 		if (dealer.isBlackjack()) {
-			if(insuranceOffered) {
+			if(inInsurance()) {
 				registerEvent(new Event(EventType.INSURANCE_PAID));
 			}
 			registerEvent(new Event(EventType.DEALER_BLACKJACK));
 			afterPlay();
 		} else {
-			if(insuranceOffered) {
+			if(inInsurance()) {
 				registerEvent(new Event(EventType.INSURANCE_COLLECTED));
 			}
 			if(tableRules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START)
@@ -636,6 +641,7 @@ public class Table {
 	 * @param e
 	 */
 	private void registerEvent(Event e) {
+		System.out.println("Registered " + e);
 		eventsQueue.add(e);
 	}
 
@@ -676,5 +682,18 @@ public class Table {
 	public void RigCardsUnitTestMethod(List<Card> cards) {
 		shoe.rigNextCardsDangerRemoveMe(cards);
 	}
+	
+	public boolean inInsurance() {
+		return state == TableStates.INSURANCE;
+	}
+
+	public void closeInsurance() {
+		if(!inInsurance()) {
+			throw new IllegalStateException();
+		}
+		startPlay();
+		
+	}
+
 
 }

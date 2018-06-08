@@ -33,10 +33,10 @@ public class HandSprite {
 		cardSprites = new ArrayList<CardSprite>();
 	}
 
-	public int tick(SpriteBatch batch, BitmapFont font, boolean noUpdates) {
+	public int tick(SpriteBatch batch, BitmapFont font) {
 		int spritesFinished = 0;
 		for(CardSprite cs : cardSprites) {
-			if (cs.tick(batch, noUpdates)) {
+			if (cs.tick(batch)) {
 				spritesFinished++;
 			}
 		}

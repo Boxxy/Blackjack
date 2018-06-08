@@ -39,8 +39,6 @@ public class SpriteManager {
 	private final BitmapFont font;
 	private final BitmapFont bigFont;
 	int movingSprites = 0;
-	int delay = 0;
-	int delayThreshold = 0;
 	private String displayString = "";
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
@@ -64,40 +62,24 @@ public class SpriteManager {
 
 	}
 
-	public boolean busy() {
-		if (delayThreshold > 0)
-			return true;
-		if (movingSprites < 0)
-			throw new IllegalStateException("Lost some sprites");
-		return movingSprites > 0;
-	}
-
 	public void render() {
-		boolean noUpdates = false;
-		if (delayThreshold > delay) {
-			delay++;
-			noUpdates = true;
-		} else {
-			delay = 0;
-			delayThreshold = 0;
-		}
 
 		batch.begin();
 
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
 
 		for (CardSprite cs : dealer) {
-			if (cs.tick(batch, noUpdates))
+			if (cs.tick(batch))
 				movingSprites--;
 		}
 
 		for (CardSprite cs : discard) {
-			if (cs.tick(batch, noUpdates))
+			if (cs.tick(batch))
 				movingSprites--;
 		}
 
 		for (SpotSprite ss : players) {
-			movingSprites -= ss.tick(batch, font, noUpdates);
+			movingSprites -= ss.tick(batch, font);
 
 		}
 
@@ -189,12 +171,6 @@ public class SpriteManager {
 			discardSpot(ss);
 		}
 		discardDealer();
-	}
-
-	public void setDelay(int i) {
-		delay = 0;
-		delayThreshold = i;
-
 	}
 
 	public void setDisplayString(String s) {

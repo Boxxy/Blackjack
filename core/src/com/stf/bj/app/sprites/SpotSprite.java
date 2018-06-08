@@ -24,10 +24,10 @@ public class SpotSprite {
 		this.handSprites = handSprites;
 	}
 
-	public int tick(SpriteBatch batch, BitmapFont font, boolean noUpdates) {
+	public int tick(SpriteBatch batch, BitmapFont font) {
 		int finishedSprites = 0;
 		for (HandSprite hs : handSprites) {
-			finishedSprites += hs.tick(batch, font, noUpdates);
+			finishedSprites += hs.tick(batch, font);
 		}
 		drawMoney(batch, font);
 		return finishedSprites;

@@ -17,9 +17,6 @@ public class Sprite {
 	private float targetRotation = 0;
 	private float rotationalVelocity;
 
-	public Sprite() {
-	}
-
 	public void setTexture(String path) {
 		texture = new TextureRegion(new Texture(Gdx.files.internal(path)));
 	}
@@ -40,7 +37,7 @@ public class Sprite {
 	public void setDestination(Vector2 v) {
 		setDestination(v, 0f);
 	}
-	
+
 	public void setDestination(Vector2 v, float targetRotation) {
 		destination.x = v.x;
 		destination.y = v.y;
@@ -51,12 +48,12 @@ public class Sprite {
 			rotationalVelocity = 0;
 			return;
 		}
-		
+
 		this.targetRotation = targetRotation;
 		float rotationalDifference = targetRotation - rotation;
-		if(rotationalDifference != 0) {
+		if (rotationalDifference != 0) {
 			float distance = location.dst(destination);
-			float time = Math.abs(distance/velocity);
+			float time = Math.abs(distance / velocity);
 			rotationalVelocity = rotationalDifference / (time - 1f);
 		}
 	}
@@ -65,22 +62,22 @@ public class Sprite {
 		velocity = v;
 	}
 
-	public boolean tick(SpriteBatch batch, boolean noUpdates) {
+	public boolean tick(SpriteBatch batch) {
 
 		boolean stoppedMoving = false;
-		if (!noUpdates) {
-			if (!visible)
-				return false;
-			if (moving) {
-				stoppedMoving = updateLocation();
-			}
+		if (!visible) {
+			return false;
+		}
+		if (moving) {
+			stoppedMoving = updateLocation();
 		}
 		render(batch);
 		return stoppedMoving;
 	}
 
 	protected void render(SpriteBatch batch) {
-		batch.draw(texture, location.x, location.y, 0f, 0f, texture.getRegionWidth(), texture.getRegionHeight(), 1f, 1f, rotation);
+		batch.draw(texture, location.x, location.y, 0f, 0f, texture.getRegionWidth(), texture.getRegionHeight(), 1f, 1f,
+				rotation);
 	}
 
 	protected boolean updateLocation() {
@@ -96,14 +93,14 @@ public class Sprite {
 		wayToGo.sub(location);
 		wayToGo.limit(velocity);
 		location.add(wayToGo);
-		
+
 		float rotationalDifference = targetRotation - rotation;
-		if(Math.abs(rotationalDifference) < Math.abs(rotationalVelocity)) {
+		if (Math.abs(rotationalDifference) < Math.abs(rotationalVelocity)) {
 			rotation = targetRotation;
-		}else {
+		} else {
 			rotation += rotationalVelocity;
 		}
-		
+
 		return false;
 	}
 }

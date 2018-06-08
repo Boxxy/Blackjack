@@ -39,7 +39,7 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		AppSettings settings = AppSettings.getRandom();
+		AppSettings settings = AppSettings.getNew();
 		bjManager = new BjManager(settings);
 		Random r = new Random(System.currentTimeMillis());
 		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
@@ -62,7 +62,7 @@ public class BjApp extends ApplicationAdapter {
 		ranks.add(Ranks.TEN);
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
-		bjManager.shadyShit(ranks);
+		//bjManager.shadyShit(ranks);
 	}
 
 	@Override
@@ -71,13 +71,7 @@ public class BjApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		bjManager.input(handleInput());
-
-		if (!spriteManager.busy()) { // TODO i don't like this set up for processing. Graphics, input, and game logic
-										// should be less coupled.
-			if (!bjManager.processEvents(spriteManager)) {
-				bjManager.tick(spriteManager);
-			}
-		}
+		bjManager.tick(spriteManager);
 		spriteManager.render();
 	}
 
