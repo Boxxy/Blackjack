@@ -59,7 +59,7 @@ public class BjManager {
 
 	public void tick(SpriteManager sm) {
 		if (insuranceMode) {
-			if (playerManager.updateInsurances()) {
+			if (playerManager.updateInsurances(sm)) {
 				insuranceTimerWageChanged();
 			}
 			if (insuranceTimer()) {

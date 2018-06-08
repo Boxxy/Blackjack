@@ -4,14 +4,15 @@ import java.util.List;
 
 import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.sprites.AnimationSettings;
+import com.stf.bj.app.sprites.SpriteManager;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
 import com.stf.bj.app.table.Table;
 import com.stf.bj.app.table.TableRules;
 
-public class PlayerManager {
+public class PlayerManager { //TODO i think I should just combine this with blackjack manager
 	private final List<Spot> spots;
-	private final AnimationSettings animationSettings; //unused atm
+	private final AnimationSettings animationSettings;
 
 	public PlayerManager(List<Spot> spotList, AnimationSettings animationSettings) {
 		this.spots = spotList;
@@ -30,6 +31,9 @@ public class PlayerManager {
 		Spot spot = spots.get(e.getSpotIndex());
 		int hand = e.getHandIndex();
 		if (e.getType().isPayout()) {
+			if(spot.tookEvenMoney()) {
+				return;
+			}
 			spot.addChips(hand, e.getType().getPayout(), false);
 		}
 		if (e.getType() == EventType.SPOT_DOUBLE) {
@@ -131,27 +135,41 @@ public class PlayerManager {
 		return true;
 	}
 
-	public boolean updateInsurances() {
+	public boolean updateInsurances(SpriteManager sm) {
 		boolean updated = false;
 		for (Spot s : spots) {
 			if (s.getPlayer() == null)
 				continue;
-			if (updateInsurance(s)) {
+			if (!s.singleBetOut())
+				continue;
+			if (updateInsurance(sm, s)) {
 				updated = true;
 			}
 		}
 		return updated;
 	}
 
-	private boolean updateInsurance(Spot s) {
+	private boolean updateInsurance(SpriteManager sm, Spot s) {
 		boolean newPlay = s.getPlayer().getInsurancePlay();
 		boolean oldPlay = s.isBettingInsurance();
+		
+		if(animationSettings.isImmediatelyPayEvenMoney() && newPlay && s.isBlackjack()){
+			payTakeEvenMoney(sm, s);
+			return true;
+		}
+		
 		if (newPlay != oldPlay) {
 			s.setBettingInsurance(newPlay);
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	private void payTakeEvenMoney(SpriteManager sm, Spot s) {
+		s.addChips(0, 1, false);
+		s.setTookEvenMoney();
+		sm.discardSpot(s.getSprite());
 	}
 
 	public void payoutInsurance() {

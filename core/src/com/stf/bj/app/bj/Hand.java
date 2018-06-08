@@ -93,4 +93,8 @@ public class Hand {
 	public void setCurrentPlayingHand(boolean currentPlayingHand) {
 		this.currentPlayingHand = currentPlayingHand;
 	}
+
+	public boolean isBlackjack() {
+		return hand.isBlackjack();
+	}
 }

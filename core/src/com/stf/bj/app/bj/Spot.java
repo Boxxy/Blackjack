@@ -22,6 +22,7 @@ public class Spot {
 	private boolean inPlay = false;
 	int activeHands = 0;
 	private boolean bettingInsurance = false;
+	private boolean tookEvenMoney;
 
 	public Spot(int index, int hands) {
 		this.index = index;
@@ -170,10 +171,6 @@ public class Spot {
 		return activeHands;
 	}
 
-	public boolean isInPlay() {
-		return inPlay;
-	}
-
 	public void setInPlay(boolean inPlay) {
 		this.inPlay = inPlay;
 		if(inPlay==true) {
@@ -203,7 +200,8 @@ public class Spot {
 		for (Hand h : hands) {
 			h.clearCards();
 		}
-		activeHands = 1;
+		activeHands = 1; //TODO this should be 0 and set to 1 when we actually have a hadn or it's name changed
+		tookEvenMoney = false;
 	}
 
 	public void ontoNextHand() {
@@ -244,6 +242,19 @@ public class Spot {
 
 	public void takeInsurance() {
 		bettingInsurance = false;
+	}
+
+	public boolean isBlackjack() {
+		return hands.get(0).isBlackjack();
+	}
+
+	public void setTookEvenMoney() {
+		tookEvenMoney = true;
+		hands.get(0).clearCards();
+	}
+
+	public boolean tookEvenMoney() {
+		return tookEvenMoney;
 	}
 
 }

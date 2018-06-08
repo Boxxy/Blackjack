@@ -16,7 +16,7 @@ public class AnimationSettings {
 	private final float horiziontalCardOffset; //TODO
 	private final float verticalCardOffset; //TODO
 	
-	private final boolean immediatelyPayEvenMoney; //TODO
+	private final boolean immediatelyPayEvenMoney;
 	
 	/**
 	 * 
