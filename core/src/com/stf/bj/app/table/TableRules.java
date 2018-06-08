@@ -74,11 +74,13 @@ public class TableRules {
 	
 	public static TableRules getRandom() {
 		Random r = new Random(System.currentTimeMillis());
-		int i = r.nextInt(2);
+		int i = r.nextInt(3);
 		if(i == 0) {
 			return mystic6();
 		}else if(i == 1) {
 			return hochunk();
+		}else if (i == 2) {
+			return mystic4Surrender();
 		}
 		return mystic6();
 	}

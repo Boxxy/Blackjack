@@ -48,7 +48,7 @@ public class TimingSettings {
 		return new TimingSettings(18f, 350, 80, 200, 50, 200, 30, 40, 20, 40, 100, 50);
 	}
 
-	private static TimingSettings getInstant() {
+	public static TimingSettings getInstant() {
 		return new TimingSettings(0,0,0,0,0,0,0,0, 0, 0, 0, 0);
 	}
 
