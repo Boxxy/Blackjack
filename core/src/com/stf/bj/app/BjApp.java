@@ -40,7 +40,7 @@ public class BjApp extends ApplicationAdapter {
 
 	private void createBlackjack() {
 		TableRules rules = TableRules.getRandom();
-		bjManager = new BjManager(rules, AnimationSettings.getRandom());
+		bjManager = new BjManager(rules, AnimationSettings.getNew());
 		Random r = new Random(System.currentTimeMillis());
 		int playerSpot = r.nextInt(rules.getSpots());
 		bjManager.addPlayer(playerSpot, PlayerType.HUMAN);
@@ -62,7 +62,7 @@ public class BjApp extends ApplicationAdapter {
 		ranks.add(Ranks.TEN);
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
-		//bjManager.shadyShit(r);
+		//bjManager.shadyShit(ranks);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class BjApp extends ApplicationAdapter {
 				bjManager.tick(spriteManager);
 			}
 		}
-		spriteManager.render(bjManager.getPlayerManager());
+		spriteManager.render();
 	}
 
 	private int handleInput() {

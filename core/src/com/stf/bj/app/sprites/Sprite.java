@@ -37,6 +37,9 @@ public class Sprite {
 		destination.x = v.x;
 		destination.y = v.y;
 		moving = true;
+		if(velocity <= 0f) {
+			location = destination;
+		}
 	}
 
 	public void setVelocity(float v) {

@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.stf.bj.app.bj.Spot;
-import com.stf.bj.app.players.PlayerManager;
 import com.stf.bj.app.sprites.AnimationSettings.FlipDealerCard;
 import com.stf.bj.app.table.Card;
 
@@ -73,7 +72,7 @@ public class SpriteManager {
 		return movingSprites > 0;
 	}
 
-	public void render(PlayerManager playerManager) {
+	public void render() {
 		boolean noUpdates = false;
 		if (delayThreshold > delay) {
 			delay++;

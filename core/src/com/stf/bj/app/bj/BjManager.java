@@ -3,8 +3,12 @@ package com.stf.bj.app.bj;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.stf.bj.app.players.BasicBot;
+import com.stf.bj.app.players.BasicCountingBot;
+import com.stf.bj.app.players.BasicIndexCountingBot;
+import com.stf.bj.app.players.Human;
 import com.stf.bj.app.players.Play;
-import com.stf.bj.app.players.PlayerManager;
+import com.stf.bj.app.players.Player;
 import com.stf.bj.app.players.PlayerType;
 import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.SpriteManager;
@@ -21,7 +25,6 @@ public class BjManager {
 	Table table;
 	private final TableRules rules;
 	int playerSpot = 0;
-	private final PlayerManager playerManager;
 	int timer = 0;
 	private static final int DEAL_TIMER_BASE = 150;
 	private static final int DEAL_TIMER_RESET = 100;
@@ -40,7 +43,6 @@ public class BjManager {
 		for (int spotIndex = 0; spotIndex < rules.getSpots(); spotIndex++) {
 			spots.add(new Spot(spotIndex, rules.getSplits() + 1));
 		}
-		playerManager = new PlayerManager(spots, animationSettings);
 	}
 
 	public void shadyShit(List<Ranks> ranks) {
@@ -59,7 +61,7 @@ public class BjManager {
 
 	public void tick(SpriteManager sm) {
 		if (insuranceMode) {
-			if (playerManager.updateInsurances(sm)) {
+			if (updateInsurances(sm)) {
 				insuranceTimerWageChanged();
 			}
 			if (insuranceTimer()) {
@@ -68,11 +70,11 @@ public class BjManager {
 			}
 
 		} else if (table.acceptingWagers()) {
-			if (playerManager.updateWagers(table)) {
+			if (updateWagers(table)) {
 				dealTimerWageChanged();
 			}
 			if (table.canStartDeal()) {
-				if (dealTimer() && playerManager.betsClean()) {
+				if (dealTimer() && betsClean()) {
 					table.startDeal();
 				}
 			}
@@ -135,7 +137,14 @@ public class BjManager {
 		boolean takeRenderBreak = false;
 		while (table.hasNewEvent() && !takeRenderBreak && !insuranceMode) {
 			Event e = table.grabLastEvent();
-			playerManager.sendEvent(e);
+
+			for (Spot s : spots) {
+				Player p = s.getPlayer();
+				if (p == null)
+					continue;
+				p.sendEvent(e);
+			}
+
 			if (e.hasSpot()) {
 				takeRenderBreak = processSpotEvent(sm, e, spots.get(e.getSpotIndex()));
 			} else {
@@ -172,9 +181,9 @@ public class BjManager {
 			sm.setDisplayString("Insurance / even money?");
 			return false;
 		case INSURANCE_PAID:
-			playerManager.payoutInsurance();
+			payoutInsurance();
 		case INSURANCE_COLLECTED:
-			playerManager.collectInsurance();
+			collectInsurance();
 		default:
 			return false;
 		}
@@ -206,33 +215,39 @@ public class BjManager {
 			spot.ontoNextHand();
 			return false;
 		case WIN_BLACKJACK:
-			if (rules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
+			if (rules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START && !spot.tookEvenMoney()) {
 				spot.clearCards();
 				sm.discardSpot(spot.getSprite());
-				//chips are handled in playermanager, weird TODO
 				return true;
 			} else {
 				return false;
 			}
+		case SPOT_DOUBLE:
+			spot.addChips(e.getHandIndex(), 1, true);
+			return false;
 		default:
+			if (e.getType().isPayout()) {
+				if (spot.tookEvenMoney()) {
+					return false;
+				}
+				spot.addChips(e.getHandIndex(), e.getType().getPayout(), false);
+				return true;
+			}
 			return false;
 		}
 	}
 
 	public void input(int keyPressed) {
-		playerManager.sendInput(keyPressed);
+		for (Spot s : spots) {
+			if (!s.isHuman()) {
+				continue;
+			}
+			s.getHuman().sendInput(keyPressed);
+		}
 	}
 
 	public TableRules getRules() {
 		return rules;
-	}
-
-	public void addPlayer(int spot, PlayerType pt) {
-		playerManager.addPlayer(spots.get(spot), pt, rules);
-	}
-
-	public PlayerManager getPlayerManager() {
-		return playerManager;
 	}
 
 	public List<Spot> getSpots() {
@@ -241,6 +256,145 @@ public class BjManager {
 
 	public AnimationSettings getAnimationSettings() {
 		return animationSettings;
+	}
+
+	public void addPlayer(int spotIndex, PlayerType pt) {
+		Player p = null;
+		Spot spot = spots.get(spotIndex);
+		switch (pt) {
+		case BASIC_BOT:
+			p = new BasicBot(rules);
+			break;
+		case BASIC_COUNTING_BOT:
+			p = new BasicCountingBot(rules);
+			break;
+		case BASIC_INDEX_COUNTING_BOT:
+			p = new BasicIndexCountingBot(rules);
+			break;
+		case HUMAN:
+			p = new Human();
+			break;
+		default:
+			throw new IllegalArgumentException("Player Type not yet supported");
+
+		}
+		spot.addPlayer(p);
+		p.setSpot(spot.getIndex()); // TODO is this really needed?
+
+	}
+
+	private boolean updateWagers(Table table) {
+		boolean updated = false;
+		for (Spot s : spots) {
+			if (s.getPlayer() == null)
+				continue;
+			if (updateWager(s, table)) {
+				updated = true;
+			}
+		}
+		return updated;
+	}
+
+	private boolean updateWager(Spot s, Table table) {
+		double newWager = s.getPlayer().getWager();
+		double oldWager = s.getWager();
+		if (newWager < 0) {// No update from player
+			if (table.canActivateSpot(s.getIndex()) && s.singleBetOut()) {
+				table.activateSpot(s.getIndex());
+				return true;
+			}
+			return false;
+		} else if (newWager == 0 && oldWager == 0) { // Player said no bet and they already weren't betting
+			return false;
+		} else if (newWager == oldWager && !table.canActivateSpot(s.getIndex())) { // Player said same bet, and is
+																					// already in
+			return false;
+		}
+
+		// We actually have to update chips here
+		s.removeAllChips();
+		s.setWager(newWager);
+		if (newWager == 0) {
+			if (table.canDeactivateSpot(s.getIndex())) {
+				table.deactivateSpot(s.getIndex());
+			}
+			return true;
+		}
+
+		s.addChips(0, 1, true);
+		if (table.canActivateSpot(s.getIndex()))
+			table.activateSpot(s.getIndex());
+		return true;
+	}
+
+	public String getDisplayString(int spot) {
+		return spots.get(spot).getChipDisplay();
+	}
+
+	public String getDisplayString(int spot, int hand) {
+		return spots.get(spot).getHand(hand).getChipDisplay();
+	}
+
+	private boolean betsClean() {
+		for (Spot s : spots) {
+			if (!s.isReady()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean updateInsurances(SpriteManager sm) {
+		boolean updated = false;
+		for (Spot s : spots) {
+			if (s.getPlayer() == null)
+				continue;
+			if (!s.singleBetOut())
+				continue;
+			if (updateInsurance(sm, s)) {
+				updated = true;
+			}
+		}
+		return updated;
+	}
+
+	private boolean updateInsurance(SpriteManager sm, Spot s) {
+		boolean newPlay = s.getPlayer().getInsurancePlay();
+		boolean oldPlay = s.isBettingInsurance();
+
+		if (animationSettings.isImmediatelyPayEvenMoney() && newPlay && s.isBlackjack()) {
+			payTakeEvenMoney(sm, s);
+			return true;
+		}
+
+		if (newPlay != oldPlay) {
+			s.setBettingInsurance(newPlay);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void payTakeEvenMoney(SpriteManager sm, Spot s) {
+		s.addChips(0, 1, false);
+		s.setTookEvenMoney();
+		sm.discardSpot(s.getSprite());
+	}
+
+	private void payoutInsurance() {
+		for (Spot s : spots) {
+			if (s.isBettingInsurance()) {
+				s.payInsurance();
+			}
+		}
+	}
+
+	private void collectInsurance() {
+		for (Spot s : spots) {
+			if (s.isBettingInsurance()) {
+				s.takeInsurance();
+			}
+		}
 	}
 
 }
