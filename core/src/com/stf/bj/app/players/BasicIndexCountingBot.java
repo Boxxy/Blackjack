@@ -17,7 +17,11 @@ public class BasicIndexCountingBot extends BasicCountingBot {
 	Strategy above6Strategy = new HoChunkStrategyUp6();
 
 	public Play getMove(int handIndex, boolean canDouble, boolean canSplit, boolean canSurrender) {
-
+		if (delay > 0) {
+			delay--;
+			return null;
+		}
+		
 		double trueCount = getTrueCount();
 		if (trueCount < 0) {
 			setStrategy(below0Strategy);

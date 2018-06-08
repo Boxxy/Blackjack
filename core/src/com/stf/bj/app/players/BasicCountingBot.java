@@ -44,12 +44,9 @@ public class BasicCountingBot extends BasicBot {
 
 	@Override
 	public double getWager() {
-
-		if (delay < maxDelay) {
-			delay++;
+		if (delay > 0) {
+			delay--;
 			return -1;
-		} else {
-			delay = 0;
 		}
 
 		double trueCount = getTrueCount();

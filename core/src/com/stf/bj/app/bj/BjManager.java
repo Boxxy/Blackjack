@@ -12,7 +12,6 @@ import com.stf.bj.app.players.Human;
 import com.stf.bj.app.players.Play;
 import com.stf.bj.app.players.Player;
 import com.stf.bj.app.players.PlayerType;
-import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.AnimationManager;
 import com.stf.bj.app.sprites.Timer;
 import com.stf.bj.app.table.Card;
@@ -21,7 +20,6 @@ import com.stf.bj.app.table.EventType;
 import com.stf.bj.app.table.Ranks;
 import com.stf.bj.app.table.Suits;
 import com.stf.bj.app.table.Table;
-import com.stf.bj.app.table.TableRules;
 import com.stf.bj.app.table.TableRules.PayAndCleanPlayerBlackjack;
 
 public class BjManager {
@@ -36,6 +34,7 @@ public class BjManager {
 	}
 
 	private GamePhase gamePhase = GamePhase.OTHER;
+	private int round = 0;
 
 	public BjManager(AppSettings settings) {
 		this.settings = settings;
@@ -61,36 +60,36 @@ public class BjManager {
 		table.openTable();
 	}
 
-	public void tick(AnimationManager sm) {
+	public void tick(AnimationManager animationManager) {
 
-		if(timer.hasDelay()) {
+		if (timer.hasDelay()) {
 			timer.tickDelay();
 			return;
 		}
 
-		processEvents(sm);
-		
-		if(timer.hasDelay()) {
+		processEvents(animationManager);
+
+		if (timer.hasDelay()) {
 			return;
 		}
-		
+
 		switch (gamePhase) {
 		case INSURANCE:
-			if(!table.inInsurance()) {
+			if (!table.inInsurance()) {
 				throw new IllegalStateException();
 			}
-			if (updateInsurances(sm)) {
+			if (updateInsurances(animationManager)) {
 				timer.insuranceTimerWageChanged();
 			}
 			if (timer.insuranceTimer()) {
 				table.closeInsurance();
-				sm.setDisplayString("");
+				animationManager.setDisplayString("");
 			}
 			break;
 		case OTHER:
 			break;
 		case PLAY:
-			if(!table.inPlay()) {
+			if (!table.inPlay()) {
 				throw new IllegalStateException();
 			}
 			Play move = spots.get(table.getCurrentSpot()).getPlayer().getMove(table.getCurrentHand(), table.canDouble(),
@@ -112,22 +111,26 @@ public class BjManager {
 					table.stand();
 					break;
 				case SURRENDER:
+					table.surrender();
+					break;
 				default:
 					throw new IllegalArgumentException("Unsupported move");
 				}
 			}
 			break;
 		case WAGER:
-			if(!table.acceptingWagers()) {
+			if (!table.acceptingWagers()) {
 				throw new IllegalStateException();
 			}
 			if (updateWagers(table)) {
 				timer.dealTimerWageChanged();
-			}
-			if (table.canStartDeal()) {
-				if (timer.dealTimer() && betsClean()) {
-					table.startDeal();
+				if (allSpotsTheSame()) {
+					timer.dealTimerSpeedUp();
 				}
+			}
+			boolean timerDone = timer.dealTimer();
+			if (table.canStartDeal() && timerDone && betsClean()) {
+				table.startDeal();
 			}
 			break;
 		default:
@@ -136,12 +139,25 @@ public class BjManager {
 		}
 	}
 
-	public void processEvents(AnimationManager sm) {
+	private boolean allSpotsTheSame() {
+		for (Spot s : spots) {
+			if (s.getPlayedLastRound() != s.singleBetOut()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private void updateSpotsIn() {
+		for(Spot s : spots) {
+			s.setPlayedLastRound();
+		}
+	}
+
+	public void processEvents(AnimationManager animationManager) {
 		while (table.hasNewEvent() && !timer.hasDelay()) {
 			Event e = table.grabLastEvent();
-			System.out.println("Processed " + Gdx.graphics.getFrameId() + " " + e);
 			timer.setDelayForEventType(e.getType());
-			
 
 			for (Spot s : spots) {
 				Player p = s.getPlayer();
@@ -151,9 +167,9 @@ public class BjManager {
 			}
 
 			if (e.hasSpot()) {
-				processSpotEvent(sm, e, spots.get(e.getSpotIndex()));
+				processSpotEvent(animationManager, e, spots.get(e.getSpotIndex()));
 			} else {
-				processTableEvent(sm, e);
+				processTableEvent(animationManager, e);
 			}
 		}
 	}
@@ -170,11 +186,14 @@ public class BjManager {
 			gamePhase = GamePhase.OTHER;
 			animationManager.setDisplayString("");
 			animationManager.newDeal();
+			round ++;
+			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round;
 			break;
 		case DEALER_ENDED_TURN:
 			break;
 		case TABLE_OPENED:
 			gamePhase = GamePhase.WAGER;
+			timer.resetWagerTimer();
 			animationManager.setDisplayString("Place your bets!");
 			for (Spot s : spots) {
 				s.clearCards();
@@ -183,6 +202,7 @@ public class BjManager {
 			break;
 		case INSURANCE_OFFERED:
 			gamePhase = GamePhase.INSURANCE;
+			timer.resetInsuranceTimer();
 			animationManager.setDisplayString("Insurance / even money?");
 			break;
 		case INSURANCE_PAID:
@@ -195,6 +215,7 @@ public class BjManager {
 			break;
 		case PLAY_STARTED:
 			gamePhase = GamePhase.PLAY;
+			updateSpotsIn();
 			break;
 		case PLAY_FINISHED:
 			gamePhase = GamePhase.OTHER;
@@ -241,6 +262,9 @@ public class BjManager {
 			break;
 		case SPOT_DOUBLE:
 			spot.setDoubled(e.getHandIndex());
+			break;
+		case SPOT_SURRENDER:
+			sm.discardSpot(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
 			break;
 		default:
 			if (e.getType().isPayout() && !spot.tookEvenMoney()) {

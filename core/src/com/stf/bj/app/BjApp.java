@@ -39,7 +39,7 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		AppSettings settings = AppSettings.getNew();
+		AppSettings settings = AppSettings.getRandom();
 		bjManager = new BjManager(settings);
 		Random r = new Random(System.currentTimeMillis());
 		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
@@ -93,6 +93,9 @@ public class BjApp extends ApplicationAdapter {
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
 			return Input.Keys.D;
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			return Input.Keys.R;
 		}
 		return -1;
 	}

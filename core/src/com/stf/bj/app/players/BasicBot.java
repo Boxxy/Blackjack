@@ -7,31 +7,57 @@ import com.stf.bj.app.players.strategy.BaseHoChunkStrategy;
 import com.stf.bj.app.players.strategy.Strategy;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
-import com.stf.bj.app.table.TableRules;
 
 public class BasicBot implements Player {
 
-	Strategy strategy;
-	int handTotals[];
-	boolean handAces[];
-	int dealerUpCardValue = -1;
-	int mySpotIndex = -1;
-	int timesSplit = 0;
-	int splits;
-	int delay = 0;
-	protected final int maxDelay;
+	private Strategy strategy;
+	private int handTotals[];
+	private boolean handAces[];
+	private int dealerUpCardValue = -1;
+	private int mySpotIndex = -1;
+	private int timesSplit = 0;
+	private int splits;
+	protected int delay = 0;
+	protected final int baseDelay;
+	private final Random r;
+	private double wager = -1.0;
 
-	public BasicBot(AppSettings settings){
+	public BasicBot(AppSettings settings) {
 		this.splits = settings.getTableRules().getSplits();
 		handTotals = new int[splits + 1];
 		handAces = new boolean[splits + 1];
-		Random r = new Random();
+		r = new Random();
 		setStrategy(new BaseHoChunkStrategy());
 		int delayFromSettings = settings.getTimingSettings().getBaseBotDelay();
-		//maxDelay = delayFromSettings/2 + r.nextInt(delayFromSettings * 2);
-		maxDelay = delayFromSettings;
+		if (delayFromSettings > 0) {
+			baseDelay = delayFromSettings / 2 + r.nextInt(delayFromSettings);
+		} else {
+			baseDelay = 0;
+		}
+		setWager();
+		resetDelay();
 	}
-	
+
+	private void setWager() {
+		if (wager == -1.0) {
+			int rInt = r.nextInt(12);
+			if (rInt < 6) {
+				wager = 5.0 * (1 + rInt);
+			} else if (rInt < 9) {
+				wager = 10.0;
+			} else {
+				wager = 5.0;
+			}
+		} else {
+			int rInt = r.nextInt(20);
+			if (rInt == 0) {
+				wager += 5.0;
+			} else if (rInt == 1 && wager > 6.0) {
+				wager -= 5.0;
+			}
+		}
+	}
+
 	public void setStrategy(Strategy strategy) {
 		this.strategy = strategy;
 	}
@@ -43,38 +69,45 @@ public class BasicBot implements Player {
 		}
 		dealerUpCardValue = -12;
 		timesSplit = 0;
-	}
 
+		setWager();
+
+	}
 
 	@Override
 	public Play getMove(int handIndex, boolean canDouble, boolean canSplit, boolean canSurrender) {
-		if (delay < maxDelay) {
-			delay++;
+		if (delay > 0) {
+			delay--;
 			return null;
-		} else {
-			delay = 0;
 		}
 		Play play;
 		boolean isSoft = !canSplit && getHandSoft(handIndex);
 		int total = getHandTotal(handIndex, isSoft);
-		play = strategy.getPlay(total, dealerUpCardValue,
-				isSoft, canDouble, canSplit, canSurrender);
+		play = strategy.getPlay(total, dealerUpCardValue, isSoft, canDouble, canSplit, canSurrender);
 		return play;
+	}
+
+	private void resetDelay() {
+		if (baseDelay > 0) {
+			delay = baseDelay / 2 + r.nextInt(baseDelay);
+		} else {
+			delay = 0;
+		}
 	}
 
 	protected int getHandTotal(int handIndex, boolean isSoft) {
 		int total = handTotals[handIndex];
 		if (isSoft) {
-			total+= 10;
+			total += 10;
 		}
 		return total;
 	}
-	
+
 	protected boolean getHandSoft(int handIndex) {
 		int total = handTotals[handIndex];
 		return (handAces[handIndex] && total < 12);
 	}
-	
+
 	@Override
 	public boolean getInsurancePlay() {
 		return false;
@@ -91,7 +124,9 @@ public class BasicBot implements Player {
 			return;
 		if (e.hasSpot() && e.getSpotIndex() != mySpotIndex)
 			return;
-		if (e.getType() == EventType.DEAL_STARTED) {
+		if (e.getType() == EventType.TABLE_OPENED) {
+			resetDelay();
+		} else if (e.getType() == EventType.DEAL_STARTED) {
 			reset();
 		} else if (e.getType() == EventType.DEALER_GAINED_CARD) {
 			if (dealerUpCardValue < 1) {
@@ -99,9 +134,10 @@ public class BasicBot implements Player {
 			}
 		} else if (e.getType() == EventType.SPOT_GAINED_CARD) {
 			addCardToHand(e.getCard().getValue(), e.getHandIndex());
+			resetDelay();
 		} else if (e.getType() == EventType.SPOT_SPLIT) {
 			addSplit(e.getHandIndex());
-		} 
+		}
 	}
 
 	private void addCardToHand(int value, int handIndex) {
@@ -113,20 +149,18 @@ public class BasicBot implements Player {
 
 	private void addSplit(int handIndex) {
 		int nextHandIndex = ++timesSplit;
-		handTotals[handIndex] = handTotals[handIndex]/2;
+		handTotals[handIndex] = handTotals[handIndex] / 2;
 		handTotals[nextHandIndex] = handTotals[handIndex];
 		handAces[nextHandIndex] = handAces[handIndex];
 	}
 
 	@Override
 	public double getWager() {
-		if (delay < maxDelay) {
-			delay++;
+		if (delay > 0) {
+			delay--;
 			return -1;
-		} else {
-			delay = 0;
 		}
-		return 5.0;
+		return wager;
 	}
 
 }

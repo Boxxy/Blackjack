@@ -1,5 +1,4 @@
-Timer + Animation settings
-Timer + Animation actions
+
 
 Play check concept
 Wager check concept
@@ -17,8 +16,10 @@ Animation/Graphical improvements
   Better Fonts
   Adding little "Hit", "Stay", "Shuffle" etc text pop ups to denote plays
   Adding shoe/discard images for penetration tracking
-  Chips should be their own sprites
+  Chips should be their own sprites'
+  	Better control the clean up animation (chips and cards)
   Sprite sheet for cards instead of individual textures
+  Decouple animations from framerate (assumes 60fps atm)
   
 Bot names and slight personalities/speech bubbles
 

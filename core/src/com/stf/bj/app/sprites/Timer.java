@@ -65,31 +65,44 @@ public class Timer {
 	}
 
 	public void dealTimerWageChanged() {
-		if (wagerInsuranceTimer > settings.getWagerTimerAdditional())
+		if (wagerInsuranceTimer < settings.getWagerTimerAdditional())
 			wagerInsuranceTimer = settings.getWagerTimerAdditional();
 	}
 
 	public boolean dealTimer() {
-		wagerInsuranceTimer++;
-		if (wagerInsuranceTimer > settings.getWagerTimerBase()) {
-			wagerInsuranceTimer = 0;
+		wagerInsuranceTimer--;
+		if (wagerInsuranceTimer < 0) {
 			return true;
 		}
 		return false;
 	}
 
+	public void dealTimerSpeedUp() {
+		wagerInsuranceTimer = settings.getWagerTimerAdditional();
+	}
+
 	public void insuranceTimerWageChanged() {
-		if (wagerInsuranceTimer > settings.getInsuranceTimerAdditional())
+		if (wagerInsuranceTimer < settings.getInsuranceTimerAdditional())
 			wagerInsuranceTimer = settings.getInsuranceTimerAdditional();
 	}
 
 	public boolean insuranceTimer() {
-		wagerInsuranceTimer++;
-		if (wagerInsuranceTimer > settings.getInsuranceTimerBase()) {
-			wagerInsuranceTimer = 0;
+		wagerInsuranceTimer--;
+		if (wagerInsuranceTimer < 0) {
 			return true;
 		}
 		return false;
+	}
+
+	public void resetWagerTimer() {
+		wagerInsuranceTimer = settings.getWagerTimerBase();
+	}
+	public void resetInsuranceTimer() {
+		wagerInsuranceTimer = settings.getInsuranceTimerBase();
+	}
+	
+	public int getWagerInsuranceTimer() {
+		return wagerInsuranceTimer;
 	}
 	
 }

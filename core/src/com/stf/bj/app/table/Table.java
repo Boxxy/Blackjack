@@ -641,7 +641,6 @@ public class Table {
 	 * @param e
 	 */
 	private void registerEvent(Event e) {
-		System.out.println("Registered " + e);
 		eventsQueue.add(e);
 	}
 

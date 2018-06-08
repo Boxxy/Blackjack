@@ -10,19 +10,9 @@ public class TableRules {
 		PLAY_START, CLEAN_UP;
 	}
 	private final PayAndCleanPlayerBlackjack payAndCleanPlayerBlackjack;
+	private final String details;
 
-	/**
-	 * 
-	 * @param decks
-	 * @param spots
-	 * @param dealerHitSoft17
-	 * @param surrenderAllowed
-	 * @param doubleAfterSplit
-	 * @param aceReSplit
-	 * @param penetration
-	 * @param splits
-	 */
-	public TableRules(int decks, int spots, boolean dealerHitSoft17, boolean surrenderAllowed, boolean doubleAfterSplit, boolean aceReSplit, int penetration, int splits, PayAndCleanPlayerBlackjack payAndCleanPlayerBlackjack) {
+	public TableRules(int decks, int spots, boolean dealerHitSoft17, boolean surrenderAllowed, boolean doubleAfterSplit, boolean aceReSplit, int penetration, int splits, PayAndCleanPlayerBlackjack payAndCleanPlayerBlackjack, String details) {
 		this.decks = decks;
 		this.spots = spots;
 		this.dealerHitSoft17 = dealerHitSoft17;
@@ -32,6 +22,7 @@ public class TableRules {
 		this.penetration = penetration;
 		this.splits = splits;
 		this.payAndCleanPlayerBlackjack = payAndCleanPlayerBlackjack;
+		this.details = details;
 	}
 
 	public boolean dealerHitSoft17() {
@@ -71,14 +62,14 @@ public class TableRules {
 	}
 
 	public static TableRules mystic6() {
-		return new TableRules(6, 6, true, false, true, true, 5*52+52/4, 3, PayAndCleanPlayerBlackjack.PLAY_START);
+		return new TableRules(6, 6, true, false, true, true, 5*52, 3, PayAndCleanPlayerBlackjack.PLAY_START, "Mystic 6 Deck (1 deck penetration) with No Surrender");
 	}
 
 	public static TableRules mystic4Surrender() {
-		return new TableRules(4, 6, true, true, true, true, 3*52+52/4, 3, PayAndCleanPlayerBlackjack.PLAY_START);
+		return new TableRules(4, 6, true, true, true, true, 3*52, 3, PayAndCleanPlayerBlackjack.PLAY_START,  "Mystic 4 Deck (1 deck penetration) with Surrender");
 	}
 	public static TableRules hochunk() {
-		return new TableRules(6, 6, true, false, true, false, 52*4+52/2, 2, PayAndCleanPlayerBlackjack.CLEAN_UP);
+		return new TableRules(6, 6, true, false, true, false, 52*4+52/2, 2, PayAndCleanPlayerBlackjack.CLEAN_UP, "Ho chunk 5 Deck (1 deck penetration) with Surrender");
 	}
 	
 	public static TableRules getRandom() {
@@ -90,5 +81,9 @@ public class TableRules {
 			return hochunk();
 		}
 		return mystic6();
+	}
+
+	public String getDetails() {
+		return details;
 	}
 }
