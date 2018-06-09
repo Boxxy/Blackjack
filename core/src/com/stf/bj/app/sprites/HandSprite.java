@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.bj.Hand;
 import com.stf.bj.app.table.Card;
@@ -52,7 +53,7 @@ public class HandSprite {
 	private void drawMoney(SpriteBatch batch, BitmapFont font) {
 		float y = MONEY_HAND_OFFSET_Y;
 
-		font.draw(batch, hand.getChipDisplay(), anchor.x, anchor.y + y);
+		font.draw(batch, hand.getChipDisplay(), anchor.x, anchor.y + y, CARD_WIDTH, Align.center, false);
 	}
 
 	public void clear() {

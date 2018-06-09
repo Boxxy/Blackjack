@@ -11,7 +11,9 @@ public class DesktopLauncher {
 	    config.width = 1280;
 	    config.height = 720;
 	    config.resizable = false;
-
+	    //config.foregroundFPS = 0;
+	    //config.backgroundFPS = 0;
+	    //config.vSyncEnabled = false;
 		new LwjglApplication(new BjApp(), config);
 	}
 }

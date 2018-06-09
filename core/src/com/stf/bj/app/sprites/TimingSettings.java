@@ -61,13 +61,15 @@ public class TimingSettings {
 		if (r == null) {
 			r = new Random(System.currentTimeMillis());
 		}
-		int i = r.nextInt(3);
+		int i = r.nextInt(4);
 		if (i == 0) {
 			return getSlow();
 		} else if (i == 1) {
 			return getFast();
 		} else if (i == 2) {
 			return getInstant();
+		}else if (i == 3) {
+			return getInstantPlayer();
 		}
 
 		return getFast();

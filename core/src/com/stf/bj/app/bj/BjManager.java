@@ -160,7 +160,6 @@ public class BjManager {
 	public void processEvents(AnimationManager animationManager) {
 		while (table.hasNewEvent() && !timer.hasDelay()) {
 			Event e = table.grabLastEvent();
-			System.out.println(e);
 			timer.setDelayForEventType(e.getType());
 
 			for (Spot s : spots) {
@@ -192,7 +191,7 @@ public class BjManager {
 			animationManager.setDisplayString("");
 			animationManager.newDeal();
 			round++;
-			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round;
+			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round + " - " + Gdx.graphics.getFramesPerSecond();
 			break;
 		case DEALER_ENDED_TURN:
 			break;
@@ -326,7 +325,7 @@ public class BjManager {
 			p = new RealisticBot(settings, r, spot);
 			break;
 		case HUMAN:
-			p = new Human(spot);
+			p = new Human(spot, settings);
 			break;
 		default:
 			throw new IllegalArgumentException("Player Type not yet supported");

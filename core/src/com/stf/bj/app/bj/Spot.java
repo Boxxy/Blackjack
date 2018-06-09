@@ -274,4 +274,12 @@ public class Spot {
 		playedLastRound = singleBetOut();
 	}
 
+	public Hand getCurrentHand() {
+		for(Hand h : hands) {
+			if(h.isTheCurrentPlayingHand())
+				return h;
+		}
+		return null;
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.stf.bj.app.players;
 
 import com.badlogic.gdx.Input;
+import com.stf.bj.app.AppSettings;
 import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
@@ -15,9 +16,11 @@ public class Human implements Player {
 	private static final int NULL_COMMAND = -1;
 	boolean lastInsurancePlay = false;
 	Spot spot;
+	private final Coach coach;
 
-	public Human(Spot spot) {
+	public Human(Spot spot, AppSettings settings) {
 		this.spot = spot;
+		this.coach = new Coach(spot, settings);
 	}
 
 	@Override
@@ -43,7 +46,9 @@ public class Human implements Player {
 			}
 			currentCommand = NULL_COMMAND;
 		}
-
+		if (p != null) {
+			coach.checkPlay(p, canDouble, canSplit, canSurrender);
+		}
 		return p;
 	}
 
@@ -66,10 +71,32 @@ public class Human implements Player {
 
 	@Override
 	public void sendEvent(Event e) {
-		if (e.getType() == EventType.TABLE_OPENED && wager != -1) {
-			lastWager = wager;
-			wager = -1;
-			lastInsurancePlay = false;
+
+		switch (e.getType()) {
+		case TABLE_OPENED:
+			coach.newHand();
+			if (wager != -1) {
+				lastWager = wager;
+				wager = -1;
+				lastInsurancePlay = false;
+			}
+			break;
+		case DEAL_STARTED:
+			coach.checkWager(spot.getWager());
+			break;
+		case DEALER_GAINED_CARD:
+			coach.sendDealerCard(e.getCard());
+			break;
+		case SPOT_GAINED_CARD:
+			coach.sendCard(e.getCard());
+			break;
+		case DECK_SHUFFLED:
+			coach.sendShuffle();
+			break;
+		case INSURANCE_COLLECTED:
+		case INSURANCE_PAID:
+			coach.checkInsurancePlay();
+			break;
 		}
 	}
 
@@ -88,9 +115,9 @@ public class Human implements Player {
 					wager = 5.0;
 				}
 			} else {
-				if(wager > 49.0) {
+				if (wager > 49.0) {
 					wager += 25.0;
-				}else {
+				} else {
 					wager += 5.0;
 				}
 			}
@@ -118,6 +145,10 @@ public class Human implements Player {
 		} else {
 			currentCommand = NULL_COMMAND;
 		}
+	}
+
+	public Coach getCoach() {
+		return coach;
 	}
 
 }

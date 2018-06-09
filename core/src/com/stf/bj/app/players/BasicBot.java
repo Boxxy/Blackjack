@@ -54,7 +54,7 @@ public class BasicBot implements Player {
 			return null;
 		}
 		Play play;
-		boolean isSoft = !canSplit && isHandSoft(handIndex);
+		boolean isSoft = isHandSoft(handIndex);
 		int total = getHandSoftTotal(handIndex);
 		play = strategy.getPlay(total, dealerUpCardValue, isSoft, canDouble, canSplit, canSurrender);
 		return play;

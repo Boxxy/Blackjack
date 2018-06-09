@@ -59,10 +59,12 @@ public class BasicCountingBot extends BasicBot {
 			return 10;
 		} else if (trueCount < 4) {
 			return 15;
-		} else if (trueCount < 7) {
+		} else if (trueCount < 6) {
 			return 25;
-		} else {
+		} else if (trueCount < 8) {
 			return 50;
+		} else {
+			return 100;
 		}
 	}
 
