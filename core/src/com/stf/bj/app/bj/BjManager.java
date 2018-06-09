@@ -191,7 +191,7 @@ public class BjManager {
 			animationManager.setDisplayString("");
 			animationManager.newDeal();
 			round++;
-			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round + " - " + Gdx.graphics.getFramesPerSecond();
+			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round;
 			break;
 		case DEALER_ENDED_TURN:
 			break;

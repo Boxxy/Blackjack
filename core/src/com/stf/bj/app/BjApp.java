@@ -63,7 +63,7 @@ public class BjApp extends ApplicationAdapter {
 		ranks.add(Ranks.TEN);
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
-		bjManager.shadyShit(ranks);
+		//bjManager.shadyShit(ranks);
 	}
 
 	@Override
