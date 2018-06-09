@@ -28,6 +28,7 @@ public class BjApp extends ApplicationAdapter {
 	boolean mouseDown;
 	int lastRank = 0;
 	int lastSuit = 0;
+	Random r;
 
 	@Override
 	public void create() {
@@ -39,16 +40,16 @@ public class BjApp extends ApplicationAdapter {
 	}
 
 	private void createBlackjack() {
-		AppSettings settings = AppSettings.getRandom();
+		r = new Random(System.currentTimeMillis());
+		AppSettings settings = AppSettings.getRandom(r);
 		bjManager = new BjManager(settings);
-		Random r = new Random(System.currentTimeMillis());
 		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
-		bjManager.addPlayer(playerSpot, PlayerType.HUMAN);
+		bjManager.addPlayer(playerSpot, PlayerType.HUMAN, null);
 		for(int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
 			if(spot == playerSpot) {
 				continue;
 			}
-			bjManager.addPlayer(spot, PlayerType.getRandom());
+			bjManager.addPlayer(spot, PlayerType.getRandom(r), r);
 		}
 		bjManager.openTable();
 

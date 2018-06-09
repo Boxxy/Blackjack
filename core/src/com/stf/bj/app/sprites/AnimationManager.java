@@ -26,6 +26,7 @@ public class AnimationManager {
 	private static final float EDGE_SPOT_Y = 300f;
 	public static final Vector2 DECK_ANCHOR = new Vector2(900f, 600f);
 	public static final Vector2 DISCARD_ANCHOR = new Vector2(100f, 600f);
+	public static final Vector2 PENETRATION_ANCHOR = new Vector2(200f, 600f);
 	private static final Vector2 MIDDLE_TEXT_ANCHOR = new Vector2(500f, 400f);
 	private static final Vector2 DEALER_ANCHOR = new Vector2(800f, 600f);
 	private static final Vector2 SPOT_0_ANCHOR = new Vector2(1100f, EDGE_SPOT_Y);
@@ -42,6 +43,7 @@ public class AnimationManager {
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
 	public String debugText = "";
+	private String penetration;
 
 	public AnimationManager(SpriteBatch batch, List<Spot> spots, AppSettings settings) {
 		this.batch = batch;
@@ -68,6 +70,7 @@ public class AnimationManager {
 
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
 		font.draw(batch, debugText, 10, 718);
+		font.draw(batch, penetration, PENETRATION_ANCHOR.x, PENETRATION_ANCHOR.y);
 
 		for (CardSprite cs : dealer) {
 			cs.tick(batch);
@@ -172,6 +175,10 @@ public class AnimationManager {
 
 	public void updateHandPlacements(SpotSprite spotSprite, int delayBeforeMoving) {
 		spotSprite.updateHandAnchors(delayBeforeMoving);
+	}
+
+	public void setPenetrationString(String penetration) {
+		this.penetration = penetration;
 	}
 
 }

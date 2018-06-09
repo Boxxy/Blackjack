@@ -1,6 +1,9 @@
 package com.stf.bj.app.players;
 
+import java.util.Random;
+
 import com.stf.bj.app.AppSettings;
+import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.players.strategy.HoChunkStrategyDown0;
 import com.stf.bj.app.players.strategy.HoChunkStrategyUp0;
 import com.stf.bj.app.players.strategy.HoChunkStrategyUp6;
@@ -8,8 +11,8 @@ import com.stf.bj.app.players.strategy.Strategy;
 
 public class BasicIndexCountingBot extends BasicCountingBot {
 
-	public BasicIndexCountingBot(AppSettings settings) {
-		super(settings);
+	public BasicIndexCountingBot(AppSettings settings, Random r, Spot s) {
+		super(settings, r, s);
 	}
 
 	Strategy below0Strategy = new HoChunkStrategyDown0();

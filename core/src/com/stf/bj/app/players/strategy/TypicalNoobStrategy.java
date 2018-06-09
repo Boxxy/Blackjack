@@ -1,10 +1,8 @@
 package com.stf.bj.app.players.strategy;
 
 import com.stf.bj.app.players.Play;
-import com.stf.bj.app.table.Card;
-import com.stf.bj.app.table.Hand;
 
-public class HoChunkStrategyUp0 implements Strategy {
+public class TypicalNoobStrategy implements Strategy {
 
 	
 	//HIT = 1, STAY=2, DOUBLEHIT=3, DOUBLESTAY=4, SPLIT=5, SURRENDERHIT=6, SURRENDERSTAY=7, SURRENDERSPLIT=8
@@ -15,15 +13,15 @@ public class HoChunkStrategyUp0 implements Strategy {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 3, 1, 1, 1, 1},
 			{1, 3, 3, 3, 3, 3, 1, 1, 1, 1}, //Player 9
 			{1, 3, 3, 3, 3, 3, 3, 3, 3, 1},
-			{3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-			{1, 1, 1, 2, 2, 2, 1, 1, 1, 1}, //Player 12
+			{1, 3, 3, 3, 3, 3, 3, 3, 3, 1},
+			{1, 2, 2, 2, 2, 2, 1, 1, 1, 1}, //Player 12
+			{1, 1, 1, 2, 2, 2, 1, 1, 1, 1},
 			{1, 2, 2, 2, 2, 2, 1, 1, 1, 1},
-			{1, 2, 2, 2, 2, 2, 1, 1, 1, 1},
-			{6, 2, 2, 2, 2, 2, 1, 1, 1, 6},
-			{6, 2, 2, 2, 2, 2, 1, 1, 6, 7}, //Player 16
+			{1, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, //Player 16
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -33,14 +31,14 @@ public class HoChunkStrategyUp0 implements Strategy {
 	
 	private int softTotals[][] = {
 	     //  A  2  3  4  5  6  7  8  9  T
-			{1, 1, 1, 1, 3, 3, 1, 1, 1, 1}, //Player 12
-			{1, 1, 1, 1, 3, 3, 1, 1, 1, 1},
-			{1, 1, 1, 3, 3, 3, 1, 1, 1, 1}, //Player 14 (A+3)
-			{1, 1, 1, 3, 3, 3, 1, 1, 1, 1},
-			{1, 1, 1, 3, 3, 3, 1, 1, 1, 1}, //Player 16 (A+5)
-			{1, 1, 3, 3, 3, 3, 1, 1, 1, 1}, //Player 17 (A+6)
-			{1, 4, 4, 4, 4, 4, 2, 2, 1, 1},
-			{2, 2, 2, 2, 2, 4, 2, 2, 2, 2}, //Player 19 (A+8)
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //Player 12
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //Player 14 (A+3)
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //Player 16 (A+5)
+			{1, 2, 2, 2, 2, 2, 2, 1, 1, 1}, //Player 17 (A+6)
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, //Player 19 (A+8)
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}  //Player 21
 	};
@@ -48,14 +46,14 @@ public class HoChunkStrategyUp0 implements Strategy {
 	private int pairs[][] = {
 	     //  A  2  3  4  5  6  7  8  9  T
 			{5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, //Player AA
-			{1, 1, 1, 5, 5, 5, 5, 1, 1, 1},
-			{1, 1, 1, 5, 5, 5, 5, 1, 1, 1}, //Player 33
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 5, 5, 5, 5, 1, 1, 1, 1},
+			{1, 1, 5, 5, 5, 5, 1, 1, 1, 1}, //Player 33
+			{1, 1, 5, 5, 5, 5, 1, 1, 1, 1},
 			{1, 3, 3, 3, 3, 3, 3, 3, 3, 1}, //Player 55
-			{1, 5, 5, 5, 5, 5, 1, 1, 1, 1}, //Player 66
-			{1, 5, 5, 5, 5, 5, 5, 1, 1, 1},
-			{8, 5, 5, 5, 5, 5, 5, 5, 5, 5}, //Player 88
-			{2, 5, 5, 5, 5, 5, 2, 5, 5, 2},
+			{1, 2, 2, 2, 5, 5, 1, 1, 1, 1}, //Player 66
+			{1, 5, 5, 5, 5, 5, 1, 1, 1, 1},
+			{5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, //Player 88
+			{2, 5, 5, 5, 5, 5, 5, 5, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2}  //Player TT
 	};
 
@@ -126,5 +124,6 @@ public class HoChunkStrategyUp0 implements Strategy {
 	private int getSplitPlay(int total, int dealerCardValue) {
 		return pairs[total / 2 - 1][dealerCardValue - 1];
 	}
+
 
 }

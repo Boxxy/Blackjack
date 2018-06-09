@@ -1,5 +1,7 @@
 package com.stf.bj.app;
 
+import java.util.Random;
+
 import com.stf.bj.app.sprites.AnimationSettings;
 import com.stf.bj.app.sprites.TimingSettings;
 import com.stf.bj.app.table.TableRules;
@@ -29,15 +31,15 @@ public class AppSettings {
 	}
 	
 	public static AppSettings getNew() {
-		return new AppSettings(TableRules.mystic4Surrender(), AnimationSettings.getNew(), TimingSettings.getFast());
+		return new AppSettings(TableRules.hochunk(), AnimationSettings.getNew(), TimingSettings.getFast());
 	}
 	
 	public static AppSettings getClassic() {
-		return new AppSettings(TableRules.hochunk(), AnimationSettings.getClassic(), TimingSettings.getSlow());
+		return new AppSettings(TableRules.mystic6(), AnimationSettings.getClassic(), TimingSettings.getSlow());
 	}
 	
-	public static AppSettings getRandom() {
-		return new AppSettings(TableRules.getRandom(), AnimationSettings.getRandom(), TimingSettings.getRandom());
+	public static AppSettings getRandom(Random r) {
+		return new AppSettings(TableRules.getRandom(r), AnimationSettings.getRandom(r), TimingSettings.getRandom(r));
 	}
 	
 	

@@ -1,6 +1,7 @@
 package com.stf.bj.app.players;
 
 import com.badlogic.gdx.Input;
+import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.table.Event;
 import com.stf.bj.app.table.EventType;
 
@@ -13,6 +14,11 @@ public class Human implements Player {
 	int currentCommand = -1;
 	private static final int NULL_COMMAND = -1;
 	boolean lastInsurancePlay = false;
+	Spot spot;
+
+	public Human(Spot spot) {
+		this.spot = spot;
+	}
 
 	@Override
 	public Play getMove(int handIndex, boolean canDouble, boolean canSplit, boolean canSurrender) {

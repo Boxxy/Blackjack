@@ -10,18 +10,19 @@ public class TimingSettings {
 	private final int wagerTimerAdditional;
 	private final int insuranceTimerBase;
 	private final int insuranceTimerAdditional;
-	
+
 	private final int shuffleDelay;
 	private final int newPlayerCardDelay;
 	private final int newDealerCardDelay;
 	private final int playDelay;
 	private final int payOutDelay;
 	private final int bustDelay;
-	
+
 	private final int baseBotDelay;
 
-	public TimingSettings(float cardSpeed, int wagerTimerBase, int wagerTimerAdditional,
-			int insuranceTimerBase, int insuranceTimerAdditional, int shuffleDelay, int newPlayerCardDelay, int newDealerCardDelay, int playDelay, int payOutDelay, int bustDelay, int baseBotDelay) {
+	public TimingSettings(float cardSpeed, int wagerTimerBase, int wagerTimerAdditional, int insuranceTimerBase,
+			int insuranceTimerAdditional, int shuffleDelay, int newPlayerCardDelay, int newDealerCardDelay,
+			int playDelay, int payOutDelay, int bustDelay, int baseBotDelay) {
 		this.cardSpeed = cardSpeed;
 		this.wagerTimerBase = wagerTimerBase;
 		this.wagerTimerAdditional = wagerTimerAdditional;
@@ -45,21 +46,27 @@ public class TimingSettings {
 	}
 
 	public static TimingSettings getFast() {
-		return new TimingSettings(18f, 350, 80, 200, 50, 200, 30, 40, 20, 40, 100, 50);
+		return new TimingSettings(18f, 350, 80, 200, 50, 200, 30, 40, 20, 20, 100, 50);
 	}
 
 	public static TimingSettings getInstant() {
-		return new TimingSettings(0,0,0,0,0,0,0,0, 0, 0, 0, 0);
+		return new TimingSettings(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
-	public static TimingSettings getRandom() {
-		Random r = new Random(System.currentTimeMillis());
+	public static TimingSettings getInstantPlayer() {
+		return new TimingSettings(0, 200, 40, 150, 50, 0, 0, 0, 0, 0, 0, 0);
+	}
+
+	public static TimingSettings getRandom(Random r) {
+		if (r == null) {
+			r = new Random(System.currentTimeMillis());
+		}
 		int i = r.nextInt(3);
 		if (i == 0) {
 			return getSlow();
 		} else if (i == 1) {
 			return getFast();
-		}else if (i == 2) {
+		} else if (i == 2) {
 			return getInstant();
 		}
 
@@ -89,6 +96,7 @@ public class TimingSettings {
 	public int getPlayerCardDelay() {
 		return newPlayerCardDelay;
 	}
+
 	public int getDealerCardDelay() {
 		return newDealerCardDelay;
 	}

@@ -3,6 +3,7 @@ package com.stf.bj.app.players;
 import java.util.Random;
 
 import com.stf.bj.app.AppSettings;
+import com.stf.bj.app.bj.Spot;
 import com.stf.bj.app.players.strategy.BaseHoChunkStrategy;
 import com.stf.bj.app.players.strategy.Strategy;
 import com.stf.bj.app.table.Event;
@@ -11,22 +12,23 @@ import com.stf.bj.app.table.EventType;
 public class BasicBot implements Player {
 
 	private Strategy strategy;
-	private int handTotals[];
-	private boolean handAces[];
 	private int dealerUpCardValue = -1;
 	private int mySpotIndex = -1;
 	private int timesSplit = 0;
 	private int splits;
 	protected int delay = 0;
 	protected final int baseDelay;
-	private final Random r;
-	private double wager = -1.0;
+	protected final Random r;
+	private final Spot spot;
+	
 
-	public BasicBot(AppSettings settings) {
+	public BasicBot(AppSettings settings, Random r, Spot spot) {
 		this.splits = settings.getTableRules().getSplits();
-		handTotals = new int[splits + 1];
-		handAces = new boolean[splits + 1];
-		r = new Random();
+		this.spot = spot;
+		if(r == null) {
+			r = new Random(System.currentTimeMillis());
+		}
+		this.r = r;
 		setStrategy(new BaseHoChunkStrategy());
 		int delayFromSettings = settings.getTimingSettings().getBaseBotDelay();
 		if (delayFromSettings > 0) {
@@ -34,28 +36,7 @@ public class BasicBot implements Player {
 		} else {
 			baseDelay = 0;
 		}
-		setWager();
 		resetDelay();
-	}
-
-	private void setWager() {
-		if (wager == -1.0) {
-			int rInt = r.nextInt(12);
-			if (rInt < 6) {
-				wager = 5.0 * (1 + rInt);
-			} else if (rInt < 9) {
-				wager = 10.0;
-			} else {
-				wager = 5.0;
-			}
-		} else {
-			int rInt = r.nextInt(20);
-			if (rInt == 0) {
-				wager += 5.0;
-			} else if (rInt == 1 && wager > 6.0) {
-				wager -= 5.0;
-			}
-		}
 	}
 
 	public void setStrategy(Strategy strategy) {
@@ -63,15 +44,7 @@ public class BasicBot implements Player {
 	}
 
 	protected void reset() {
-		for (int i = 0; i < splits; i++) {
-			handTotals[i] = 0;
-			handAces[i] = false;
-		}
-		dealerUpCardValue = -12;
-		timesSplit = 0;
-
-		setWager();
-
+		dealerUpCardValue = -122;
 	}
 
 	@Override
@@ -81,8 +54,8 @@ public class BasicBot implements Player {
 			return null;
 		}
 		Play play;
-		boolean isSoft = !canSplit && getHandSoft(handIndex);
-		int total = getHandTotal(handIndex, isSoft);
+		boolean isSoft = !canSplit && isHandSoft(handIndex);
+		int total = getHandSoftTotal(handIndex);
 		play = strategy.getPlay(total, dealerUpCardValue, isSoft, canDouble, canSplit, canSurrender);
 		return play;
 	}
@@ -95,17 +68,15 @@ public class BasicBot implements Player {
 		}
 	}
 
-	protected int getHandTotal(int handIndex, boolean isSoft) {
-		int total = handTotals[handIndex];
-		if (isSoft) {
-			total += 10;
-		}
-		return total;
+	protected int getHandSoftTotal(int handIndex) {
+		return spot.getHand(handIndex).getHand().getSoftTotal();
+	}
+	protected int getHandHardTotal(int handIndex) {
+		return spot.getHand(handIndex).getHand().getHardTotal();
 	}
 
-	protected boolean getHandSoft(int handIndex) {
-		int total = handTotals[handIndex];
-		return (handAces[handIndex] && total < 12);
+	protected boolean isHandSoft(int handIndex) {
+		return spot.getHand(handIndex).getHand().isSoft();
 	}
 
 	@Override
@@ -133,25 +104,8 @@ public class BasicBot implements Player {
 				dealerUpCardValue = e.getCard().getValue();
 			}
 		} else if (e.getType() == EventType.SPOT_GAINED_CARD) {
-			addCardToHand(e.getCard().getValue(), e.getHandIndex());
 			resetDelay();
-		} else if (e.getType() == EventType.SPOT_SPLIT) {
-			addSplit(e.getHandIndex());
 		}
-	}
-
-	private void addCardToHand(int value, int handIndex) {
-		handTotals[handIndex] += value;
-		if (value == 1) {
-			handAces[handIndex] = true;
-		}
-	}
-
-	private void addSplit(int handIndex) {
-		int nextHandIndex = ++timesSplit;
-		handTotals[handIndex] = handTotals[handIndex] / 2;
-		handTotals[nextHandIndex] = handTotals[handIndex];
-		handAces[nextHandIndex] = handAces[handIndex];
 	}
 
 	@Override
@@ -160,7 +114,7 @@ public class BasicBot implements Player {
 			delay--;
 			return -1;
 		}
-		return wager;
+		return 5;
 	}
 
 }

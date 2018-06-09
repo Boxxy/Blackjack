@@ -2,6 +2,7 @@ package com.stf.bj.app.bj;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.stf.bj.app.AppSettings;
@@ -12,6 +13,7 @@ import com.stf.bj.app.players.Human;
 import com.stf.bj.app.players.Play;
 import com.stf.bj.app.players.Player;
 import com.stf.bj.app.players.PlayerType;
+import com.stf.bj.app.players.RealisticBot;
 import com.stf.bj.app.sprites.AnimationManager;
 import com.stf.bj.app.sprites.Timer;
 import com.stf.bj.app.table.Card;
@@ -28,6 +30,7 @@ public class BjManager {
 	private final List<Spot> spots;
 	private final AppSettings settings;
 	private final Timer timer;
+	int cardsDealt;
 
 	private enum GamePhase {
 		WAGER, INSURANCE, PLAY, OTHER
@@ -147,9 +150,9 @@ public class BjManager {
 		}
 		return true;
 	}
-	
+
 	private void updateSpotsIn() {
-		for(Spot s : spots) {
+		for (Spot s : spots) {
 			s.setPlayedLastRound();
 		}
 	}
@@ -157,6 +160,7 @@ public class BjManager {
 	public void processEvents(AnimationManager animationManager) {
 		while (table.hasNewEvent() && !timer.hasDelay()) {
 			Event e = table.grabLastEvent();
+			System.out.println(e);
 			timer.setDelayForEventType(e.getType());
 
 			for (Spot s : spots) {
@@ -178,6 +182,7 @@ public class BjManager {
 		switch (e.getType()) {
 		case DEALER_GAINED_CARD:
 			animationManager.addDealerCard(e.getCard());
+			trackCardDealt(animationManager);
 			break;
 		case DEALER_GAINED_FACE_DOWN_CARD:
 			animationManager.addDealerCard(null);
@@ -186,7 +191,7 @@ public class BjManager {
 			gamePhase = GamePhase.OTHER;
 			animationManager.setDisplayString("");
 			animationManager.newDeal();
-			round ++;
+			round++;
 			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round;
 			break;
 		case DEALER_ENDED_TURN:
@@ -222,25 +227,27 @@ public class BjManager {
 			break;
 		case DECK_SHUFFLED:
 			animationManager.setDisplayString("Shuffling");
+			resetCardDealt(animationManager);
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void processSpotEvent(AnimationManager sm, Event e, Spot spot) {
+	private void processSpotEvent(AnimationManager animationManager, Event e, Spot spot) {
 		switch (e.getType()) {
 		case PLAYER_BUSTED:
 			spot.addBust(e.getHandIndex());
-			sm.discardHand(spot.getHand(e.getHandIndex()).getSprite(), settings.getTimingSettings().getBustDelay());
-			sm.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getBustDelay());
+			animationManager.discardHand(spot.getHand(e.getHandIndex()).getSprite(), settings.getTimingSettings().getBustDelay());
+			animationManager.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getBustDelay());
 			break;
 		case SPOT_GAINED_CARD:
 			spot.addCard(e.getCard(), e.getHandIndex());
+			trackCardDealt(animationManager);
 			break;
 		case SPOT_SPLIT:
 			spot.addSplit(e.getHandIndex());
-			sm.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
+			animationManager.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
 			break;
 		case SPOT_STARTED_PLAY:
 			spot.setInPlay(true);
@@ -257,20 +264,35 @@ public class BjManager {
 			}
 			if (settings.getTableRules().getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
 				spot.clearCards();
-				sm.discardSpot(spot.getSprite(), settings.getTimingSettings().getPayOutDelay());
+				animationManager.discardSpot(spot.getSprite(), settings.getTimingSettings().getPayOutDelay());
 			}
 			break;
 		case SPOT_DOUBLE:
 			spot.setDoubled(e.getHandIndex());
 			break;
 		case SPOT_SURRENDER:
-			sm.discardSpot(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
+			animationManager.discardSpot(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
 			break;
 		default:
 			if (e.getType().isPayout() && !spot.tookEvenMoney()) {
 				spot.addChips(e.getHandIndex(), e.getType().getPayout(), false);
 			}
 			break;
+		}
+	}
+
+	private void resetCardDealt(AnimationManager animationManager) {
+		cardsDealt = 0;
+		animationManager.setPenetrationString(settings.getTableRules().getDecks() + " decks remaining");
+	}
+	
+	private void trackCardDealt(AnimationManager animationManager) {
+		cardsDealt++;
+		if (cardsDealt % 26 == 0) {
+			double totalCards = settings.getTableRules().getDecks() * 52.0;
+			double decksLeft = (totalCards - cardsDealt) / 52.0;
+			String penetration = decksLeft + " decks remaining";
+			animationManager.setPenetrationString(penetration);
 		}
 	}
 
@@ -287,21 +309,24 @@ public class BjManager {
 		return spots;
 	}
 
-	public void addPlayer(int spotIndex, PlayerType pt) {
+	public void addPlayer(int spotIndex, PlayerType pt, Random r) {
 		Player p = null;
 		Spot spot = spots.get(spotIndex);
 		switch (pt) {
 		case BASIC_BOT:
-			p = new BasicBot(settings);
+			p = new BasicBot(settings, r, spot);
 			break;
 		case BASIC_COUNTING_BOT:
-			p = new BasicCountingBot(settings);
+			p = new BasicCountingBot(settings, r, spot);
 			break;
 		case BASIC_INDEX_COUNTING_BOT:
-			p = new BasicIndexCountingBot(settings);
+			p = new BasicIndexCountingBot(settings, r, spot);
+			break;
+		case REALISTIC_BOT:
+			p = new RealisticBot(settings, r, spot);
 			break;
 		case HUMAN:
-			p = new Human();
+			p = new Human(spot);
 			break;
 		default:
 			throw new IllegalArgumentException("Player Type not yet supported");

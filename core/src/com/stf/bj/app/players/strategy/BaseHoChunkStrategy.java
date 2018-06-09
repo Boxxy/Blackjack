@@ -14,7 +14,7 @@ public class BaseHoChunkStrategy implements Strategy {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 3, 3, 3, 3, 3, 1, 1, 1, 1}, //Player 9
+			{1, 1, 3, 3, 3, 3, 1, 1, 1, 1}, //Player 9
 			{1, 3, 3, 3, 3, 3, 3, 3, 3, 1},
 			{3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
 			{1, 1, 1, 2, 2, 2, 1, 1, 1, 1}, //Player 12
@@ -22,7 +22,7 @@ public class BaseHoChunkStrategy implements Strategy {
 			{1, 2, 2, 2, 2, 2, 1, 1, 1, 1},
 			{6, 2, 2, 2, 2, 2, 1, 1, 1, 6},
 			{6, 2, 2, 2, 2, 2, 1, 1, 1, 6}, //Player 16
-			{7, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -123,11 +123,6 @@ public class BaseHoChunkStrategy implements Strategy {
 
 	private int getSplitPlay(int total, int dealerCardValue) {
 		return pairs[total / 2 - 1][dealerCardValue - 1];
-	}
-
-	@Override
-	public boolean getInsurancePlay() {
-		return false;
 	}
 
 }

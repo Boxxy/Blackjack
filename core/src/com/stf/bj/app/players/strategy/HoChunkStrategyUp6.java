@@ -24,7 +24,7 @@ public class HoChunkStrategyUp6 implements Strategy {
 			{1, 2, 2, 2, 2, 2, 1, 1, 1, 6},
 			{6, 2, 2, 2, 2, 2, 1, 1, 6, 7},
 			{6, 2, 2, 2, 2, 2, 1, 1, 6, 7}, //Player 16
-			{7, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -125,11 +125,6 @@ public class HoChunkStrategyUp6 implements Strategy {
 
 	private int getSplitPlay(int total, int dealerCardValue) {
 		return pairs[total / 2 - 1][dealerCardValue - 1];
-	}
-
-	@Override
-	public boolean getInsurancePlay() {
-		return false;
 	}
 
 }
