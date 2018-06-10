@@ -60,7 +60,7 @@ public class AnimationManager {
 			s.getSprite().setArrowTexture(arrowTexture);
 			s.getSprite().setCardSpacing(settings.getAnimationSettings().getHoriziontalCardOffset(),
 					settings.getAnimationSettings().getVerticalCardOffset());
-			if(s.isHuman()) {
+			if (s.isHuman()) {
 				coach = s.getHuman().getCoach();
 			}
 		}
@@ -68,7 +68,6 @@ public class AnimationManager {
 		bigFont = new BitmapFont();
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bigFont.getData().setScale(3f);
-		
 
 	}
 
@@ -79,7 +78,8 @@ public class AnimationManager {
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
 		font.draw(batch, debugText, 10, 718);
 		font.draw(batch, penetration, PENETRATION_ANCHOR.x, PENETRATION_ANCHOR.y);
-		bigFont.draw(batch,  coach.getMessage(),  COACH_ANCHOR.x, COACH_ANCHOR.y, 900f, Align.topLeft, true);
+		if (coach != null)
+			bigFont.draw(batch, coach.getMessage(), COACH_ANCHOR.x, COACH_ANCHOR.y, 900f, Align.topLeft, true);
 		for (CardSprite cs : dealer) {
 			cs.tick(batch);
 		}

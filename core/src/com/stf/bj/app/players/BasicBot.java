@@ -14,8 +14,6 @@ public class BasicBot implements Player {
 	private Strategy strategy;
 	private int dealerUpCardValue = -1;
 	private int mySpotIndex = -1;
-	private int timesSplit = 0;
-	private int splits;
 	protected int delay = 0;
 	protected final int baseDelay;
 	protected final Random r;
@@ -23,7 +21,6 @@ public class BasicBot implements Player {
 	
 
 	public BasicBot(AppSettings settings, Random r, Spot spot) {
-		this.splits = settings.getTableRules().getSplits();
 		this.spot = spot;
 		if(r == null) {
 			r = new Random(System.currentTimeMillis());
