@@ -1,0 +1,65 @@
+d:assets:0:application/unknown
+i:arrow.png:274:image/png
+i:badlogic.jpg:68465:image/jpeg
+d:Playing Cards:0:application/unknown
+i:Playing Cards/back.png:238:image/png
+i:Playing Cards/c2.png:393:image/png
+i:Playing Cards/c3.png:419:image/png
+i:Playing Cards/c4.png:395:image/png
+i:Playing Cards/c5.png:436:image/png
+i:Playing Cards/c6.png:429:image/png
+i:Playing Cards/c7.png:451:image/png
+i:Playing Cards/c8.png:430:image/png
+i:Playing Cards/c9.png:495:image/png
+i:Playing Cards/ca.png:356:image/png
+i:Playing Cards/cj.png:997:image/png
+i:Playing Cards/ck.png:941:image/png
+i:Playing Cards/cq.png:1106:image/png
+i:Playing Cards/ct.png:503:image/png
+i:Playing Cards/d2.png:374:image/png
+i:Playing Cards/d3.png:409:image/png
+i:Playing Cards/d4.png:386:image/png
+i:Playing Cards/d5.png:425:image/png
+i:Playing Cards/d6.png:413:image/png
+i:Playing Cards/d7.png:430:image/png
+i:Playing Cards/d8.png:454:image/png
+i:Playing Cards/d9.png:455:image/png
+i:Playing Cards/da.png:351:image/png
+i:Playing Cards/dj.png:943:image/png
+i:Playing Cards/dk.png:1034:image/png
+i:Playing Cards/dq.png:1068:image/png
+i:Playing Cards/dt.png:475:image/png
+i:Playing Cards/h2.png:392:image/png
+i:Playing Cards/h3.png:430:image/png
+i:Playing Cards/h4.png:402:image/png
+i:Playing Cards/h5.png:456:image/png
+i:Playing Cards/h6.png:443:image/png
+i:Playing Cards/h7.png:472:image/png
+i:Playing Cards/h8.png:450:image/png
+i:Playing Cards/h9.png:499:image/png
+i:Playing Cards/ha.png:371:image/png
+i:Playing Cards/hj.png:978:image/png
+i:Playing Cards/hk.png:1114:image/png
+i:Playing Cards/hq.png:1090:image/png
+i:Playing Cards/ht.png:513:image/png
+i:Playing Cards/s2.png:394:image/png
+i:Playing Cards/s3.png:421:image/png
+i:Playing Cards/s4.png:405:image/png
+i:Playing Cards/s5.png:447:image/png
+i:Playing Cards/s6.png:435:image/png
+i:Playing Cards/s7.png:470:image/png
+i:Playing Cards/s8.png:447:image/png
+i:Playing Cards/s9.png:489:image/png
+i:Playing Cards/sa.png:520:image/png
+i:Playing Cards/sj.png:966:image/png
+i:Playing Cards/sk.png:961:image/png
+i:Playing Cards/sq.png:1040:image/png
+i:Playing Cards/st.png:503:image/png
+t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:859:application/unknown
+t:com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl:2996:application/unknown
+t:com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl:5350:application/unknown
+t:com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl:9159:application/unknown
+t:com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl:904:application/unknown
+t:com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl:3056:application/unknown
+t:com/badlogic/gdx/utils/arial-15.fnt:21743:application/unknown
+i:com/badlogic/gdx/utils/arial-15.png:21814:image/png
