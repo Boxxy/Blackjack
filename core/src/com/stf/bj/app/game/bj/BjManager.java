@@ -6,6 +6,8 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.stf.bj.app.game.AppSettings;
+import com.stf.bj.app.game.animation.AnimationManager;
+import com.stf.bj.app.game.animation.Timer;
 import com.stf.bj.app.game.players.BasicBot;
 import com.stf.bj.app.game.players.BasicCountingBot;
 import com.stf.bj.app.game.players.BasicIndexCountingBot;
@@ -21,8 +23,6 @@ import com.stf.bj.app.game.server.Ranks;
 import com.stf.bj.app.game.server.Suits;
 import com.stf.bj.app.game.server.Server;
 import com.stf.bj.app.game.server.TableRules.PayAndCleanPlayerBlackjack;
-import com.stf.bj.app.game.sprites.AnimationManager;
-import com.stf.bj.app.game.sprites.Timer;
 
 public class BjManager {
 	Server table;

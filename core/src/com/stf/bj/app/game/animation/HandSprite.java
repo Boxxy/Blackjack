@@ -1,4 +1,4 @@
-package com.stf.bj.app.game.sprites;
+package com.stf.bj.app.game.animation;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.stf.bj.app.game.AppSettings;
+import com.stf.bj.app.game.animation.AnimationSettings;
+import com.stf.bj.app.game.animation.HandSprite;
+import com.stf.bj.app.game.animation.SpotSprite;
 import com.stf.bj.app.game.players.Human;
 import com.stf.bj.app.game.players.Player;
 import com.stf.bj.app.game.server.Card;
-import com.stf.bj.app.game.sprites.AnimationSettings;
-import com.stf.bj.app.game.sprites.HandSprite;
-import com.stf.bj.app.game.sprites.SpotSprite;
 
 public class Spot {
 

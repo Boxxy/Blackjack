@@ -1,4 +1,4 @@
-package com.stf.bj.app.game.sprites;
+package com.stf.bj.app.game.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

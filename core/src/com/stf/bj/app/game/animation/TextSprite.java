@@ -1,4 +1,4 @@
-package com.stf.bj.app.game.sprites;
+package com.stf.bj.app.game.animation;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

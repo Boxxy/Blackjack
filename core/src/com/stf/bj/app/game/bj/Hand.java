@@ -1,9 +1,9 @@
 package com.stf.bj.app.game.bj;
 
 import com.stf.bj.app.game.AppSettings;
+import com.stf.bj.app.game.animation.AnimationSettings;
+import com.stf.bj.app.game.animation.HandSprite;
 import com.stf.bj.app.game.server.Card;
-import com.stf.bj.app.game.sprites.AnimationSettings;
-import com.stf.bj.app.game.sprites.HandSprite;
 
 public class Hand {
 	private double chipStacks = 0;

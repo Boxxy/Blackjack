@@ -2,9 +2,9 @@ package com.stf.bj.app.game;
 
 import java.util.Random;
 
+import com.stf.bj.app.game.animation.AnimationSettings;
+import com.stf.bj.app.game.animation.TimingSettings;
 import com.stf.bj.app.game.server.TableRules;
-import com.stf.bj.app.game.sprites.AnimationSettings;
-import com.stf.bj.app.game.sprites.TimingSettings;
 
 public class AppSettings {
 

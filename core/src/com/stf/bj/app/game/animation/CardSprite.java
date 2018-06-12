@@ -1,4 +1,4 @@
-package com.stf.bj.app.game.sprites;
+package com.stf.bj.app.game.animation;
 
 import com.badlogic.gdx.math.Vector2;
 import com.stf.bj.app.game.server.Card;

@@ -4,21 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.stf.bj.app.game.animation.AnimationManager;
+import com.stf.bj.app.game.animation.CardSprite;
 import com.stf.bj.app.game.bj.BjManager;
 import com.stf.bj.app.game.players.PlayerType;
 import com.stf.bj.app.game.server.Ranks;
-import com.stf.bj.app.game.server.TableRules;
-import com.stf.bj.app.game.sprites.AnimationManager;
-import com.stf.bj.app.game.sprites.AnimationSettings;
-import com.stf.bj.app.game.sprites.CardSprite;
 
 public class BjStage extends Stage {
 	private BjManager bjManager;
