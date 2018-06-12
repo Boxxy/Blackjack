@@ -2,7 +2,7 @@ package com.stf.bj.app.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.stf.bj.app.BjApp;
+import com.stf.bj.app.StfBlackjack;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -14,6 +14,6 @@ public class DesktopLauncher {
 	    //config.foregroundFPS = 0;
 	    //config.backgroundFPS = 0;
 	    //config.vSyncEnabled = false;
-		new LwjglApplication(new BjApp(), config);
+		new LwjglApplication(new StfBlackjack(), config);
 	}
 }
