@@ -3,7 +3,7 @@ package com.stf.bj.app.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.stf.bj.app.game.BjStage;
+import com.stf.bj.app.StfBlackjack;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -46,6 +46,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new BjStage();
+                return new StfBlackjack();
         }
 }
