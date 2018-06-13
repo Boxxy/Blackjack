@@ -2,10 +2,12 @@ package com.stf.bj.app;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.stf.bj.app.game.BjStage;
+import com.stf.bj.app.game.GameStage;
 import com.stf.bj.app.mainMenu.MainMenu;
 
 public class StfBlackjack extends Game{
@@ -14,6 +16,7 @@ public class StfBlackjack extends Game{
 	private Stage mainMenuStage;
 	private Stage stage;
 	ScreenViewport svp;
+	private Skin skin;
 	
 	public enum Screens{
 		MAIN_MENU, GAME, SETTINGS;
@@ -22,6 +25,7 @@ public class StfBlackjack extends Game{
 	@Override
 	public void create() {
 		svp = new ScreenViewport();
+		skin = new Skin(Gdx.files.internal("sgx/skin/sgx-ui.json"));
 		switchToScreen(Screens.MAIN_MENU);
 	}
 
@@ -48,13 +52,13 @@ public class StfBlackjack extends Game{
 		switch(mainMenu) {
 		case GAME:
 			if(bjStage == null) {
-				bjStage = new BjStage(svp);
+				bjStage = new GameStage(svp, skin);
 			}
 			stageToSet = bjStage;
 			break;
 		case MAIN_MENU:
 			if(mainMenuStage == null) {
-				mainMenuStage = new MainMenu(this, svp);
+				mainMenuStage = new MainMenu(this, svp, skin);
 			}
 			stageToSet = mainMenuStage;
 			break;

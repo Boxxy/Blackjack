@@ -8,14 +8,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.game.animation.AnimationManager;
 import com.stf.bj.app.game.animation.CardSprite;
 import com.stf.bj.app.game.bj.BjManager;
 import com.stf.bj.app.game.players.PlayerType;
 import com.stf.bj.app.game.server.Ranks;
+import com.stf.bj.app.mainMenu.TextureActor;
 
-public class BjStage extends Stage {
+public class GameStage extends Stage {
 	private BjManager bjManager;
 	AnimationManager spriteManager;
 	boolean everyOtherClick;
@@ -25,12 +27,13 @@ public class BjStage extends Stage {
 	int lastSuit = 0;
 	Random r;
 
-	public BjStage(ScreenViewport screenViewport) {
+	public GameStage(ScreenViewport screenViewport, Skin skin) {
 		super(screenViewport);
-		createBlackjack();
+		addActor(new TextureActor("gameBackground.png"));
+		createBlackjack(skin);
 	}
 
-	private void createBlackjack() {
+	private void createBlackjack(Skin skin) {
 		r = new Random(System.currentTimeMillis());
 		AppSettings settings = AppSettings.getHochunkPratice();
 		bjManager = new BjManager(settings);
@@ -45,7 +48,7 @@ public class BjStage extends Stage {
 		bjManager.openTable();
 
 		// Player manager is a at different level, should we really do it this way? TODO
-		spriteManager = new AnimationManager(getBatch(), bjManager.getSpots(), settings);
+		spriteManager = new AnimationManager(getBatch(), bjManager.getSpots(), settings, skin);
 
 		List<Ranks> ranks = new ArrayList<Ranks>();
 		ranks.add(Ranks.ACE);
@@ -65,10 +68,6 @@ public class BjStage extends Stage {
 
 	public void draw() {
 		super.draw();
-
-		Gdx.gl.glClearColor(.1f, .8f, .3f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		spriteManager.render();
 	}
 

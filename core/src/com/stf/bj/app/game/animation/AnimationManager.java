@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.stf.bj.app.game.AppSettings;
 import com.stf.bj.app.game.animation.AnimationSettings.CoachSetting;
@@ -51,7 +52,7 @@ public class AnimationManager {
 	private String penetration;
 	private Coach coach;
 
-	public AnimationManager(Batch batch, List<Spot> spots, AppSettings settings) {
+	public AnimationManager(Batch batch, List<Spot> spots, AppSettings settings, Skin skin) {
 		this.batch = batch;
 		this.settings = settings;
 		players = new ArrayList<SpotSprite>();
@@ -66,10 +67,8 @@ public class AnimationManager {
 				coach = s.getHuman().getCoach();
 			}
 		}
-		font = new BitmapFont();
-		bigFont = new BitmapFont();
-		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bigFont.getData().setScale(3f);
+		font = skin.getFont("medium");
+		bigFont = skin.getFont("title");
 
 	}
 
