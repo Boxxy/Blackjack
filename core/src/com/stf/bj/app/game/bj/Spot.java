@@ -3,13 +3,13 @@ package com.stf.bj.app.game.bj;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.stf.bj.app.game.AppSettings;
-import com.stf.bj.app.game.animation.AnimationSettings;
 import com.stf.bj.app.game.animation.HandSprite;
 import com.stf.bj.app.game.animation.SpotSprite;
 import com.stf.bj.app.game.players.Human;
 import com.stf.bj.app.game.players.Player;
 import com.stf.bj.app.game.server.Card;
+import com.stf.bj.app.settings.AnimationSettings;
+import com.stf.bj.app.settings.AppSettings;
 
 public class Spot {
 

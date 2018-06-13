@@ -7,15 +7,23 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.stf.bj.app.StfBlackjack;
+import com.stf.bj.app.StfBlackjack.Screens;
 import com.stf.bj.app.game.animation.AnimationManager;
 import com.stf.bj.app.game.animation.CardSprite;
 import com.stf.bj.app.game.bj.BjManager;
 import com.stf.bj.app.game.players.PlayerType;
 import com.stf.bj.app.game.server.Ranks;
-import com.stf.bj.app.mainMenu.TextureActor;
+import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.utils.TextureActor;
 
 public class GameStage extends Stage {
 	private BjManager bjManager;
@@ -26,10 +34,28 @@ public class GameStage extends Stage {
 	int lastRank = 0;
 	int lastSuit = 0;
 	Random r;
+	TextButton backButton;
 
-	public GameStage(ScreenViewport screenViewport, Skin skin) {
+	public GameStage(final StfBlackjack app, ScreenViewport screenViewport, Skin skin) {
 		super(screenViewport);
 		addActor(new TextureActor("gameBackground.png"));
+
+		Table table = new Table();
+		table.setFillParent(true);
+		addActor(table);
+
+		backButton = new TextButton("Back", skin, "big");
+		table.add(backButton);
+		table.top().left();
+
+		backButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				app.switchToScreen(Screens.MAIN_MENU);
+			}
+
+		});
+
 		createBlackjack(skin);
 	}
 
@@ -39,8 +65,8 @@ public class GameStage extends Stage {
 		bjManager = new BjManager(settings);
 		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
 		bjManager.addPlayer(playerSpot, PlayerType.HUMAN, null);
-		for(int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
-			if(spot == playerSpot) {
+		for (int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
+			if (spot == playerSpot) {
 				continue;
 			}
 			bjManager.addPlayer(spot, PlayerType.REALISTIC_BOT, r);
@@ -57,9 +83,9 @@ public class GameStage extends Stage {
 		ranks.add(Ranks.TEN);
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
-		//bjManager.shadyShit(ranks);
+		// bjManager.shadyShit(ranks);
 	}
-	
+
 	public void act(float delta) {
 		super.act(delta);
 		bjManager.input(handleInput());

@@ -1,4 +1,4 @@
-package com.stf.bj.app.mainMenu;
+package com.stf.bj.app.utils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

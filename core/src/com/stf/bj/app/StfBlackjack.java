@@ -9,19 +9,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.game.GameStage;
 import com.stf.bj.app.mainMenu.MainMenu;
+import com.stf.bj.app.settings.SettingsMenu;
 
-public class StfBlackjack extends Game{
+public class StfBlackjack extends Game {
 
-	private Stage bjStage;
-	private Stage mainMenuStage;
-	private Stage stage;
+	private Stage bjStage, mainMenuStage, settingsStage, stage;
 	ScreenViewport svp;
 	private Skin skin;
-	
-	public enum Screens{
+
+	public enum Screens {
 		MAIN_MENU, GAME, SETTINGS;
 	}
-	
+
 	@Override
 	public void create() {
 		svp = new ScreenViewport();
@@ -30,13 +29,13 @@ public class StfBlackjack extends Game{
 	}
 
 	@Override
-	public void resize (int width, int height) {
+	public void resize(int width, int height) {
 		// See below for what true means.
 		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
@@ -46,27 +45,29 @@ public class StfBlackjack extends Game{
 	public void dispose() {
 		stage.dispose();
 	}
-	
+
 	public void switchToScreen(Screens mainMenu) {
 		Stage stageToSet = null;
-		switch(mainMenu) {
+		switch (mainMenu) {
 		case GAME:
-			if(bjStage == null) {
-				bjStage = new GameStage(svp, skin);
-			}
+			bjStage = new GameStage(this, svp, skin);
 			stageToSet = bjStage;
 			break;
 		case MAIN_MENU:
-			if(mainMenuStage == null) {
+			if (mainMenuStage == null) {
 				mainMenuStage = new MainMenu(this, svp, skin);
 			}
 			stageToSet = mainMenuStage;
 			break;
 		case SETTINGS:
+			if (settingsStage == null) {
+				settingsStage = new SettingsMenu(this, svp, skin);
+			}
+			stageToSet = settingsStage;
 			break;
 		default:
 			break;
-		
+
 		}
 		switchToStage(stageToSet);
 	}

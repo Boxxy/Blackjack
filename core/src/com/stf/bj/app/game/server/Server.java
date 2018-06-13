@@ -5,7 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import com.stf.bj.app.game.server.TableRules.PayAndCleanPlayerBlackjack;
+import com.stf.bj.app.settings.TableRules;
+import com.stf.bj.app.settings.TableRules.PayAndCleanPlayerBlackjack;
 
 /**
  * The table class contains all of the black jack game logic, the Table's spots,

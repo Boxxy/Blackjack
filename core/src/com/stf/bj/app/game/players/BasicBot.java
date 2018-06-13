@@ -2,12 +2,12 @@ package com.stf.bj.app.game.players;
 
 import java.util.Random;
 
-import com.stf.bj.app.game.AppSettings;
 import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.players.strategy.BaseHoChunkStrategy;
 import com.stf.bj.app.game.players.strategy.Strategy;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
+import com.stf.bj.app.settings.AppSettings;
 
 public class BasicBot implements Player {
 

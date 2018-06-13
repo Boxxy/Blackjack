@@ -2,12 +2,12 @@ package com.stf.bj.app.game.players;
 
 import java.util.Random;
 
-import com.stf.bj.app.game.AppSettings;
 import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.players.strategy.HoChunkStrategyDown0;
 import com.stf.bj.app.game.players.strategy.HoChunkStrategyUp0;
 import com.stf.bj.app.game.players.strategy.HoChunkStrategyUp6;
 import com.stf.bj.app.game.players.strategy.Strategy;
+import com.stf.bj.app.settings.AppSettings;
 
 public class BasicIndexCountingBot extends BasicCountingBot {
 

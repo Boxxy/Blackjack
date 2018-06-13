@@ -1,6 +1,7 @@
 package com.stf.bj.app.game.animation;
 
 import com.stf.bj.app.game.server.EventType;
+import com.stf.bj.app.settings.TimingSettings;
 
 public class Timer {
 	private final TimingSettings settings;

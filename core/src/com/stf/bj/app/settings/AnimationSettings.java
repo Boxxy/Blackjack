@@ -1,4 +1,4 @@
-package com.stf.bj.app.game.animation;
+package com.stf.bj.app.settings;
 
 import java.util.Random;
 

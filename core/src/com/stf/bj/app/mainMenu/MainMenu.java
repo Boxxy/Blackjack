@@ -10,12 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.StfBlackjack;
 import com.stf.bj.app.StfBlackjack.Screens;
+import com.stf.bj.app.utils.TextureActor;
 
 public class MainMenu extends Stage {
 
 	private TextButton startGameButton, settingsButton, statisticsButton;
 
-	public MainMenu(final StfBlackjack myGame, ScreenViewport svp, Skin skin) {
+	public MainMenu(final StfBlackjack app, ScreenViewport svp, Skin skin) {
 		super(svp);
 		addActor(new TextureActor("menuBackground.png"));
 
@@ -43,7 +44,15 @@ public class MainMenu extends Stage {
 		startGameButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				myGame.switchToScreen(Screens.GAME);
+				app.switchToScreen(Screens.GAME);
+			}
+
+		});
+
+		settingsButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				app.switchToScreen(Screens.SETTINGS);
 			}
 
 		});

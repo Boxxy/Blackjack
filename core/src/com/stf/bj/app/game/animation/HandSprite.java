@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
-import com.stf.bj.app.game.AppSettings;
 import com.stf.bj.app.game.bj.Hand;
 import com.stf.bj.app.game.server.Card;
+import com.stf.bj.app.settings.AppSettings;
 
 public class HandSprite {
 

@@ -12,12 +12,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.stf.bj.app.game.AppSettings;
-import com.stf.bj.app.game.animation.AnimationSettings.CoachSetting;
-import com.stf.bj.app.game.animation.AnimationSettings.FlipDealerCard;
 import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.players.Coach;
 import com.stf.bj.app.game.server.Card;
+import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.AnimationSettings.CoachSetting;
+import com.stf.bj.app.settings.AnimationSettings.FlipDealerCard;
 
 public class AnimationManager {
 

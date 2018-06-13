@@ -7,7 +7,7 @@ import com.stf.bj.app.StfBlackjack;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "BJ Test";
+		config.title = "STF Blackjack Trainer";
 	    config.width = 1280;
 	    config.height = 720;
 	    config.resizable = false;
