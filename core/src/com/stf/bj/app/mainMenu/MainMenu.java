@@ -16,8 +16,9 @@ public class MainMenu extends Stage {
 
 	private TextButton startGameButton, settingsButton, statisticsButton;
 
-	public MainMenu(final StfBlackjack app, ScreenViewport svp, Skin skin) {
-		super(svp);
+	public MainMenu(final StfBlackjack app) {
+		super(app.getSvp());
+		Skin skin = app.getSkin();
 		addActor(new TextureActor("menuBackground.png"));
 
 		Table table = new Table();

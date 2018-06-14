@@ -23,6 +23,7 @@ import com.stf.bj.app.game.bj.BjManager;
 import com.stf.bj.app.game.players.PlayerType;
 import com.stf.bj.app.game.server.Ranks;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.settings.HumanSpot.HumanSpotSetting;
 import com.stf.bj.app.utils.TextureActor;
 
 public class GameStage extends Stage {
@@ -35,9 +36,12 @@ public class GameStage extends Stage {
 	int lastSuit = 0;
 	Random r;
 	TextButton backButton;
+	private final StfBlackjack app;
 
-	public GameStage(final StfBlackjack app, ScreenViewport screenViewport, Skin skin) {
-		super(screenViewport);
+	public GameStage(StfBlackjack app) {
+		super(app.getSvp());
+		this.app = app;
+		Skin skin = app.getSkin();
 		addActor(new TextureActor("gameBackground.png"));
 
 		Table table = new Table();
@@ -51,7 +55,7 @@ public class GameStage extends Stage {
 		backButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				app.switchToScreen(Screens.MAIN_MENU);
+				back();
 			}
 
 		});
@@ -59,12 +63,20 @@ public class GameStage extends Stage {
 		createBlackjack(skin);
 	}
 
+	private void back() {
+		app.switchToScreen(Screens.MAIN_MENU);
+	}
+
 	private void createBlackjack(Skin skin) {
 		r = new Random(System.currentTimeMillis());
 		AppSettings settings = AppSettings.getHochunkPratice();
 		bjManager = new BjManager(settings);
-		int playerSpot = r.nextInt(settings.getTableRules().getSpots());
-		bjManager.addPlayer(playerSpot, PlayerType.HUMAN, null);
+
+		int playerSpot = getPlayerSpotFromSettings(r, app.getSettings().getHumanSpotValue(),
+				settings.getTableRules().getSpots());
+		if (playerSpot >= 0) {
+			bjManager.addPlayer(playerSpot, PlayerType.HUMAN, null);
+		}
 		for (int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
 			if (spot == playerSpot) {
 				continue;
@@ -84,6 +96,29 @@ public class GameStage extends Stage {
 		ranks.add(Ranks.ACE);
 		ranks.add(Ranks.TEN);
 		// bjManager.shadyShit(ranks);
+	}
+
+	private int getPlayerSpotFromSettings(Random r, HumanSpotSetting humanSpotSetting, int spots) {
+		switch (humanSpotSetting) {
+		case FIVE:
+			return 4;
+		case FOUR:
+			return 3;
+		case NONE:
+			return -1;
+		case ONE:
+			return 0;
+		case RANDOM:
+			return r.nextInt(spots);
+		case SIX:
+			return 5;
+		case THREE:
+			return 2;
+		case TWO:
+			return 1;
+		default:
+			throw new IllegalStateException();
+		}
 	}
 
 	public void act(float delta) {

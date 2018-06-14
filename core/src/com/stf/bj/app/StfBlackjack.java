@@ -2,6 +2,7 @@ package com.stf.bj.app;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -10,12 +11,15 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.game.GameStage;
 import com.stf.bj.app.mainMenu.MainMenu;
 import com.stf.bj.app.settings.SettingsMenu;
+import com.stf.bj.app.settings.settings.NewAppSettings;
 
 public class StfBlackjack extends Game {
 
 	private Stage bjStage, mainMenuStage, settingsStage, stage;
 	ScreenViewport svp;
 	private Skin skin;
+	private Preferences preferences;
+	private NewAppSettings settings;
 
 	public enum Screens {
 		MAIN_MENU, GAME, SETTINGS;
@@ -25,6 +29,8 @@ public class StfBlackjack extends Game {
 	public void create() {
 		svp = new ScreenViewport();
 		skin = new Skin(Gdx.files.internal("sgx/skin/sgx-ui.json"));
+		preferences = Gdx.app.getPreferences("defaultPreferences");
+		settings = new NewAppSettings(preferences);
 		switchToScreen(Screens.MAIN_MENU);
 	}
 
@@ -50,18 +56,18 @@ public class StfBlackjack extends Game {
 		Stage stageToSet = null;
 		switch (mainMenu) {
 		case GAME:
-			bjStage = new GameStage(this, svp, skin);
+			bjStage = new GameStage(this);
 			stageToSet = bjStage;
 			break;
 		case MAIN_MENU:
 			if (mainMenuStage == null) {
-				mainMenuStage = new MainMenu(this, svp, skin);
+				mainMenuStage = new MainMenu(this);
 			}
 			stageToSet = mainMenuStage;
 			break;
 		case SETTINGS:
 			if (settingsStage == null) {
-				settingsStage = new SettingsMenu(this, svp, skin);
+				settingsStage = new SettingsMenu(this);
 			}
 			stageToSet = settingsStage;
 			break;
@@ -75,5 +81,21 @@ public class StfBlackjack extends Game {
 	private void switchToStage(Stage stage) {
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
+	}
+	
+	public Skin getSkin() {
+		return skin;
+	}
+	
+	public ScreenViewport getSvp() {
+		return svp;
+	}
+	
+	public Preferences getPreferences() {
+		return preferences;
+	}
+	
+	public NewAppSettings getSettings(){
+		return settings;
 	}
 }
