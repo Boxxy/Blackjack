@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.StfBlackjack;
 import com.stf.bj.app.StfBlackjack.Screens;
@@ -53,7 +54,7 @@ public class SettingsMenu extends Stage {
 		addActor(table);
 
 		backButton = new TextButton("Back", skin, "big");
-		
+
 		backButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -61,11 +62,10 @@ public class SettingsMenu extends Stage {
 			}
 
 		});
-		
-		
+
 		table.add(backButton).left();
 		table.top().left();
-		
+
 		table.row();
 		addSetting(settings.getNumberOfSpotsSetting());
 		settings.getNumberOfSpotsSetting().addListener(new ClickListener() {
@@ -75,7 +75,7 @@ public class SettingsMenu extends Stage {
 			}
 		});
 		addSetting(settings.getDeckSetting());
-		
+
 		table.row();
 		addSetting(settings.getHumanSpotSetting());
 		settings.getHumanSpotSetting().addListener(new ClickListener() {
@@ -85,41 +85,40 @@ public class SettingsMenu extends Stage {
 			}
 		});
 		addSetting(settings.getDealerSoft17Setting());
-		
+
 		table.row();
 
 		addSetting(settings.getDoubleAfterSplitSetting());
 		addSetting(settings.getNumberOfSplitsSetting());
-		
+
 		table.row();
 		addSetting(settings.getResplitAcesSetting());
 		addSetting(settings.getSurrenderSetting());
-		
+
 		table.row();
 		addSetting(settings.getPayoutBlackjackSetting());
 		addSetting(settings.getFlipDealerCardSetting());
-		
+
 		table.row();
 		addSetting(settings.getEvenMoneyPaymentSetting());
 		addSetting(settings.getDoubleCardOrientationSetting());
-		
+
 		table.row();
 		addSetting(settings.getBotPlayersSetting());
 		addSetting(settings.getBotSpeedSetting());
-		
+
 		table.row();
 		addSetting(settings.getCardSpeedSetting());
 		addSetting(settings.getDealerSpeedSetting());
-		
+
 		table.row();
 		addSetting(settings.getTableMinSetting());
 		addSetting(settings.getTableMaxSetting());
-		
+
 		table.row();
 		addSetting(settings.getPenetrationSetting());
 		addSetting(settings.getCoachSetting());
-		
-		
+
 	}
 
 	private void addSetting(Setting setting) {
@@ -135,12 +134,16 @@ public class SettingsMenu extends Stage {
 
 	private void back() {
 		settings.updateAndSave();
-		app.getPreferences().flush();
+		try {
+			app.getPreferences().flush();
+		} catch (GdxRuntimeException e) {
+
+		}
 		app.switchToScreen(Screens.MAIN_MENU);
 	}
-	
+
 	private void numberOfSpotsChanged() {
-		if(settings.getHumanSpotInt() >= settings.getNumberOfSpots()) {
+		if (settings.getHumanSpotInt() >= settings.getNumberOfSpots()) {
 			settings.getHumanSpotSetting().reset();
 		}
 	}

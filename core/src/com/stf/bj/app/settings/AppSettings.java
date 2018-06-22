@@ -358,7 +358,7 @@ public class AppSettings {
 	}
 
 	public boolean coachOnScreen() {
-		return CoachSetting.values()[surrender.getValue()] == CoachSetting.ON_SCREEN;
+		return CoachSetting.values()[coach.getValue()] == CoachSetting.ON_SCREEN;
 	}
 
 	public Setting getCoachSetting() {
