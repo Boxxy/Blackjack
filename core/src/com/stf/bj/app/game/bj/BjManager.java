@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
 import com.stf.bj.app.game.animation.AnimationManager;
 import com.stf.bj.app.game.animation.Timer;
 import com.stf.bj.app.game.players.BasicBot;
@@ -22,7 +21,7 @@ import com.stf.bj.app.game.server.Ranks;
 import com.stf.bj.app.game.server.Suits;
 import com.stf.bj.app.game.server.Server;
 import com.stf.bj.app.settings.AppSettings;
-import com.stf.bj.app.settings.TableRules.PayAndCleanPlayerBlackjack;
+import com.stf.bj.app.settings.settings.PayoutBlackjack.PayoutBlackjackSetting;
 
 public class BjManager {
 	Server table;
@@ -37,16 +36,15 @@ public class BjManager {
 	}
 
 	private GamePhase gamePhase = GamePhase.OTHER;
-	private int round = 0;
 
 	public BjManager(AppSettings settings) {
 		this.settings = settings;
-		table = new Server(settings.getTableRules());
+		table = new Server(settings);
 		spots = new ArrayList<Spot>();
-		for (int spotIndex = 0; spotIndex < settings.getTableRules().getSpots(); spotIndex++) {
+		for (int spotIndex = 0; spotIndex < settings.getNumberOfSpots(); spotIndex++) {
 			spots.add(new Spot(spotIndex, settings));
 		}
-		timer = new Timer(settings.getTimingSettings());
+		timer = new Timer(settings);
 	}
 
 	public void shadyShit(List<Ranks> ranks) {
@@ -190,8 +188,6 @@ public class BjManager {
 			gamePhase = GamePhase.OTHER;
 			animationManager.setDisplayString("");
 			animationManager.newDeal();
-			round++;
-			animationManager.debugText = settings.getTableRules().getDetails() + " - " + round;
 			break;
 		case DEALER_ENDED_TURN:
 			break;
@@ -237,8 +233,8 @@ public class BjManager {
 		switch (e.getType()) {
 		case PLAYER_BUSTED:
 			spot.addBust(e.getHandIndex());
-			animationManager.discardHand(spot.getHand(e.getHandIndex()).getSprite(), settings.getTimingSettings().getBustDelay());
-			animationManager.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getBustDelay());
+			animationManager.discardHand(spot.getHand(e.getHandIndex()).getSprite(), timer.getBustDelay());
+			animationManager.updateHandPlacements(spot.getSprite(), timer.getBustDelay());
 			break;
 		case SPOT_GAINED_CARD:
 			spot.addCard(e.getCard(), e.getHandIndex());
@@ -246,7 +242,7 @@ public class BjManager {
 			break;
 		case SPOT_SPLIT:
 			spot.addSplit(e.getHandIndex());
-			animationManager.updateHandPlacements(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
+			animationManager.updateHandPlacements(spot.getSprite(), timer.getDealerDelay());
 			break;
 		case SPOT_STARTED_PLAY:
 			spot.setInPlay(true);
@@ -261,16 +257,16 @@ public class BjManager {
 			if (!spot.tookEvenMoney()) {
 				spot.addChips(e.getHandIndex(), EventType.WIN_BLACKJACK.getPayout(), false);
 			}
-			if (settings.getTableRules().getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START) {
+			if (settings.getPayoutBlackjack() == PayoutBlackjackSetting.BEFORE_PLAY) {
 				spot.clearCards();
-				animationManager.discardSpot(spot.getSprite(), settings.getTimingSettings().getPayOutDelay());
+				animationManager.discardSpot(spot.getSprite(), timer.getDealerDelay());
 			}
 			break;
 		case SPOT_DOUBLE:
 			spot.setDoubled(e.getHandIndex());
 			break;
 		case SPOT_SURRENDER:
-			animationManager.discardSpot(spot.getSprite(), settings.getTimingSettings().getPlayDelay());
+			animationManager.discardSpot(spot.getSprite(), timer.getDealerDelay());
 			break;
 		default:
 			if (e.getType().isPayout() && !spot.tookEvenMoney()) {
@@ -282,17 +278,21 @@ public class BjManager {
 
 	private void resetCardDealt(AnimationManager animationManager) {
 		cardsDealt = 0;
-		animationManager.setPenetrationString(settings.getTableRules().getDecks() + " decks remaining");
+		updatePenetrationDisplay(animationManager);
 	}
-	
+
 	private void trackCardDealt(AnimationManager animationManager) {
 		cardsDealt++;
 		if (cardsDealt % 26 == 0) {
-			double totalCards = settings.getTableRules().getDecks() * 52.0;
-			double decksLeft = (totalCards - cardsDealt) / 52.0;
-			String penetration = decksLeft + " decks remaining";
-			animationManager.setPenetrationString(penetration);
+			updatePenetrationDisplay(animationManager);
 		}
+	}
+
+	private void updatePenetrationDisplay(AnimationManager animationManager) {
+		double totalCards = settings.getDecks() * 52.0;
+		double decksLeft = (totalCards - cardsDealt) / 52.0;
+		String penetration = decksLeft + " decks remaining";
+		animationManager.setPenetrationString(penetration);
 	}
 
 	public void input(int keyPressed) {
@@ -415,7 +415,7 @@ public class BjManager {
 		boolean newPlay = s.getPlayer().getInsurancePlay();
 		boolean oldPlay = s.isBettingInsurance();
 
-		if (settings.getAnimationSettings().isImmediatelyPayEvenMoney() && newPlay && s.isBlackjack()) {
+		if (settings.payEvenMoneyImmediately() && newPlay && s.isBlackjack()) {
 			payTakeEvenMoney(sm, s);
 			return true;
 		}
@@ -431,7 +431,7 @@ public class BjManager {
 	private void payTakeEvenMoney(AnimationManager sm, Spot s) {
 		s.addChips(0, 1, false);
 		s.setTookEvenMoney();
-		sm.discardSpot(s.getSprite(), settings.getTimingSettings().getPayOutDelay());
+		sm.discardSpot(s.getSprite(), timer.getDealerDelay());
 	}
 
 	private void payoutInsurance() {

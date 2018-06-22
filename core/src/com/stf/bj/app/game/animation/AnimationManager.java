@@ -5,10 +5,8 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
@@ -16,8 +14,6 @@ import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.players.Coach;
 import com.stf.bj.app.game.server.Card;
 import com.stf.bj.app.settings.AppSettings;
-import com.stf.bj.app.settings.AnimationSettings.CoachSetting;
-import com.stf.bj.app.settings.AnimationSettings.FlipDealerCard;
 
 public class AnimationManager {
 
@@ -31,7 +27,7 @@ public class AnimationManager {
 	private static final float EDGE_SPOT_Y = 300f;
 	public static final Vector2 DECK_ANCHOR = new Vector2(900f, 600f);
 	public static final Vector2 DISCARD_ANCHOR = new Vector2(100f, 600f);
-	public static final Vector2 PENETRATION_ANCHOR = new Vector2(200f, 600f);
+	public static final Vector2 PENETRATION_ANCHOR = new Vector2(70f, 713f);
 	public static final Vector2 COACH_ANCHOR = new Vector2(200f, 550f);
 	private static final Vector2 MIDDLE_TEXT_ANCHOR = new Vector2(500f, 400f);
 	private static final Vector2 DEALER_ANCHOR = new Vector2(800f, 600f);
@@ -48,7 +44,6 @@ public class AnimationManager {
 	private String displayString = "";
 	private Card dealerUpCard;
 	private boolean secondDealerCardIsFaceDown;
-	public String debugText = "";
 	private String penetration;
 	private Coach coach;
 
@@ -61,9 +56,8 @@ public class AnimationManager {
 			s.getSprite().setAnchor(SPOT_ANCHORS[s.getIndex()]);
 			players.add(s.getSprite());
 			s.getSprite().setArrowTexture(arrowTexture);
-			s.getSprite().setCardSpacing(settings.getAnimationSettings().getHoriziontalCardOffset(),
-					settings.getAnimationSettings().getVerticalCardOffset());
-			if (s.isHuman() && settings.getAnimationSettings().getCoachSetting() != CoachSetting.SYSTEM_OUT) {
+			s.getSprite().setCardSpacing(settings.getHorizontalCardOffset(), settings.getVerticalCardOffset());
+			if (s.isHuman() && settings.coachOnScreen()) {
 				coach = s.getHuman().getCoach();
 			}
 		}
@@ -76,7 +70,6 @@ public class AnimationManager {
 
 		batch.begin();
 		bigFont.draw(batch, displayString, MIDDLE_TEXT_ANCHOR.x, MIDDLE_TEXT_ANCHOR.y);
-		font.draw(batch, debugText, 10, 718);
 		font.draw(batch, penetration, PENETRATION_ANCHOR.x, PENETRATION_ANCHOR.y);
 		if (coach != null)
 			bigFont.draw(batch, coach.getMessage(), COACH_ANCHOR.x, COACH_ANCHOR.y, 900f, Align.topLeft, true);
@@ -109,13 +102,12 @@ public class AnimationManager {
 		// When we get the hidden second card, flip the first card if it's hidden
 		if (dealerCards == 1) {
 			secondDealerCardIsFaceDown = true;
-			if (settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
-				setFaceDownDealerCard(0, dealerUpCard); // TODO delay this
+			if (!settings.flipDealerCardImmediately()) {
+				setFaceDownDealerCard(0, dealerUpCard); // TODO delay this a few ms
 			}
 		}
 
-		if (dealerCards == 0
-				&& settings.getAnimationSettings().getFlipDealerCard() == FlipDealerCard.AFTER_SECOND_CARD) {
+		if (dealerCards == 0 && !settings.flipDealerCardImmediately()) {
 			dealerUpCard = card;
 			card = null;
 		}

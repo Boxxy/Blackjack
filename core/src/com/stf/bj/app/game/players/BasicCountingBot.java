@@ -6,7 +6,6 @@ import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
-import com.stf.bj.app.settings.TableRules;
 
 public class BasicCountingBot extends BasicBot {
 
@@ -16,7 +15,7 @@ public class BasicCountingBot extends BasicBot {
 
 	public BasicCountingBot(AppSettings settings, Random r, Spot s) {
 		super(settings, r, s);
-		totalCards = settings.getTableRules().getDecks() * 52;
+		totalCards = settings.getDecks() * 52;
 	}
 
 	@Override

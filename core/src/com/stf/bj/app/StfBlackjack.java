@@ -10,8 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.game.GameStage;
 import com.stf.bj.app.mainMenu.MainMenu;
+import com.stf.bj.app.settings.AppSettings;
 import com.stf.bj.app.settings.SettingsMenu;
-import com.stf.bj.app.settings.settings.NewAppSettings;
 
 public class StfBlackjack extends Game {
 
@@ -19,7 +19,7 @@ public class StfBlackjack extends Game {
 	ScreenViewport svp;
 	private Skin skin;
 	private Preferences preferences;
-	private NewAppSettings settings;
+	private AppSettings settings;
 
 	public enum Screens {
 		MAIN_MENU, GAME, SETTINGS;
@@ -30,7 +30,7 @@ public class StfBlackjack extends Game {
 		svp = new ScreenViewport();
 		skin = new Skin(Gdx.files.internal("sgx/skin/sgx-ui.json"));
 		preferences = Gdx.app.getPreferences("defaultPreferences");
-		settings = new NewAppSettings(preferences);
+		settings = new AppSettings(preferences);
 		switchToScreen(Screens.MAIN_MENU);
 	}
 
@@ -95,7 +95,7 @@ public class StfBlackjack extends Game {
 		return preferences;
 	}
 	
-	public NewAppSettings getSettings(){
+	public AppSettings getSettings(){
 		return settings;
 	}
 }

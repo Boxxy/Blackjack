@@ -8,7 +8,6 @@ import com.stf.bj.app.game.animation.SpotSprite;
 import com.stf.bj.app.game.players.Human;
 import com.stf.bj.app.game.players.Player;
 import com.stf.bj.app.game.server.Card;
-import com.stf.bj.app.settings.AnimationSettings;
 import com.stf.bj.app.settings.AppSettings;
 
 public class Spot {
@@ -28,7 +27,7 @@ public class Spot {
 
 	public Spot(int spotIndex, AppSettings settings) {
 		this.index = spotIndex;
-		int maxHands = settings.getTableRules().getSplits() + 1;
+		int maxHands = settings.getSplits() + 1;
 		this.hands = new ArrayList<Hand>(maxHands);
 		for (int hand = 0; hand < maxHands; hand++) {
 			this.hands.add(new Hand(this, settings));

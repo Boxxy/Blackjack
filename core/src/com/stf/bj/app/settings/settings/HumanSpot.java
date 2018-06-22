@@ -15,7 +15,7 @@ public class HumanSpot extends Setting{
 	}
 	
 	public HumanSpot(Preferences preferences) {
-		super(preferences, "Player spot", HumanSpotSetting.NONE.ordinal());
+		super(preferences, "Player spot", HumanSpotSetting.RANDOM.ordinal());
 		for(HumanSpotSetting e : HumanSpotSetting.values()) {
 			addOption(e.displayName, e.ordinal());
 		}

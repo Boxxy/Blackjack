@@ -8,7 +8,6 @@ import com.stf.bj.app.game.players.strategy.Strategy;
 import com.stf.bj.app.game.server.Card;
 import com.stf.bj.app.game.server.Hand;
 import com.stf.bj.app.settings.AppSettings;
-import com.stf.bj.app.settings.AnimationSettings.CoachSetting;
 
 public class Coach {
 	private final Spot spot;
@@ -62,7 +61,7 @@ public class Coach {
 		cardsSeen++;
 		count += getCount(card);
 		if (cardsSeen % 26 == 0) {
-			decksLeft = (settings.getTableRules().getDecks() * 52 - cardsSeen) / 52.0;
+			decksLeft = (settings.getDecks() * 52 - cardsSeen) / 52.0;
 		}
 	}
 
@@ -103,7 +102,7 @@ public class Coach {
 		trueCount = 0;
 		count = 0;
 		cardsSeen = 0;
-		decksLeft = settings.getTableRules().getDecks();
+		decksLeft = settings.getDecks();
 	}
 
 	public void checkPlay(Play playDone, boolean canDouble, boolean canSplit, boolean canSurrender) {
@@ -118,8 +117,7 @@ public class Coach {
 
 	private void setMessage(String s) {
 		message = s;
-		if (settings.getAnimationSettings().getCoachSetting() != CoachSetting.SCREEN_PRINT)
-			System.out.println(s);
+		System.out.println(s);
 	}
 
 	private String generatePlayErrorString(Play idealPlay, Play playDone, Hand h, boolean sometimesCorrect) {

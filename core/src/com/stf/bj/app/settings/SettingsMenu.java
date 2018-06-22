@@ -18,10 +18,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.StfBlackjack;
 import com.stf.bj.app.StfBlackjack.Screens;
+import com.stf.bj.app.settings.settings.BotPlayers;
+import com.stf.bj.app.settings.settings.BotSpeed;
+import com.stf.bj.app.settings.settings.CardSpeed;
+import com.stf.bj.app.settings.settings.DealerSpeed;
 import com.stf.bj.app.settings.settings.Decks;
+import com.stf.bj.app.settings.settings.DoubleAfterSplit;
 import com.stf.bj.app.settings.settings.HumanSpot;
-import com.stf.bj.app.settings.settings.NewAppSettings;
+import com.stf.bj.app.settings.settings.NumberOfSplits;
+import com.stf.bj.app.settings.settings.NumberOfSpots;
+import com.stf.bj.app.settings.settings.ResplitAces;
 import com.stf.bj.app.settings.settings.Setting;
+import com.stf.bj.app.settings.settings.Surrender;
+import com.stf.bj.app.settings.settings.TableMax;
+import com.stf.bj.app.settings.settings.TableMin;
 import com.stf.bj.app.utils.TextureActor;
 
 public class SettingsMenu extends Stage {
@@ -30,7 +40,7 @@ public class SettingsMenu extends Stage {
 	private Skin skin;
 	private final StfBlackjack app;
 	private Table table;
-	private NewAppSettings settings;
+	private AppSettings settings;
 
 	public SettingsMenu(StfBlackjack app) {
 		super(app.getSvp());
@@ -43,13 +53,7 @@ public class SettingsMenu extends Stage {
 		addActor(table);
 
 		backButton = new TextButton("Back", skin, "big");
-		table.add(backButton).left();
-		table.top().left();
-
-		addSetting(settings.getHumanSpotSetting());
-
-		addSetting(settings.getDeckSetting());
-
+		
 		backButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -57,11 +61,69 @@ public class SettingsMenu extends Stage {
 			}
 
 		});
+		
+		
+		table.add(backButton).left();
+		table.top().left();
+		
+		table.row();
+		addSetting(settings.getNumberOfSpotsSetting());
+		settings.getNumberOfSpotsSetting().addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				numberOfSpotsChanged();
+			}
+		});
+		addSetting(settings.getDeckSetting());
+		
+		table.row();
+		addSetting(settings.getHumanSpotSetting());
+		settings.getHumanSpotSetting().addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				numberOfSpotsChanged();
+			}
+		});
+		addSetting(settings.getDealerSoft17Setting());
+		
+		table.row();
+
+		addSetting(settings.getDoubleAfterSplitSetting());
+		addSetting(settings.getNumberOfSplitsSetting());
+		
+		table.row();
+		addSetting(settings.getResplitAcesSetting());
+		addSetting(settings.getSurrenderSetting());
+		
+		table.row();
+		addSetting(settings.getPayoutBlackjackSetting());
+		addSetting(settings.getFlipDealerCardSetting());
+		
+		table.row();
+		addSetting(settings.getEvenMoneyPaymentSetting());
+		addSetting(settings.getDoubleCardOrientationSetting());
+		
+		table.row();
+		addSetting(settings.getBotPlayersSetting());
+		addSetting(settings.getBotSpeedSetting());
+		
+		table.row();
+		addSetting(settings.getCardSpeedSetting());
+		addSetting(settings.getDealerSpeedSetting());
+		
+		table.row();
+		addSetting(settings.getTableMinSetting());
+		addSetting(settings.getTableMaxSetting());
+		
+		table.row();
+		addSetting(settings.getPenetrationSetting());
+		addSetting(settings.getCoachSetting());
+		
+		
 	}
 
 	private void addSetting(Setting setting) {
-		table.row();
-		table.add(setting.generateTable(skin, "white", "small-toggle-green"));
+		table.add(setting.generateTable(skin, "white", "small-toggle-green")).center().expandX();
 	}
 
 	public void draw() {
@@ -75,5 +137,11 @@ public class SettingsMenu extends Stage {
 		settings.updateAndSave();
 		app.getPreferences().flush();
 		app.switchToScreen(Screens.MAIN_MENU);
+	}
+	
+	private void numberOfSpotsChanged() {
+		if(settings.getHumanSpotInt() >= settings.getNumberOfSpots()) {
+			settings.getHumanSpotSetting().reset();
+		}
 	}
 }

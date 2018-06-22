@@ -57,8 +57,8 @@ public class Shoe {
 		return shoe.get(index++);
 	}
 
-	public void setCut(int cut) {
-		this.cut = cut;
+	public void setCut(int cardsLeft) {
+		this.cut = shoe.size() - cardsLeft;
 	}
 
 	public boolean needsShuffle() {
@@ -70,7 +70,7 @@ public class Shoe {
 		shoe.clear();
 		shoe.addAll(0,cards);
 		shuffle();
-		setCut(shoe.size() - 26);
+		setCut(26);
 	}
 
 }

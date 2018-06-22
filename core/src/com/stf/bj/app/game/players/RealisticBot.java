@@ -9,7 +9,6 @@ import com.stf.bj.app.game.players.strategy.TypicalNoobStrategy;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
-import com.stf.bj.app.settings.TableRules;
 
 public class RealisticBot extends BasicBot {
 

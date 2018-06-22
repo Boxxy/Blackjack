@@ -23,10 +23,12 @@ import com.stf.bj.app.game.bj.BjManager;
 import com.stf.bj.app.game.players.PlayerType;
 import com.stf.bj.app.game.server.Ranks;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.settings.BotPlayers.BotPlayersSetting;
 import com.stf.bj.app.settings.settings.HumanSpot.HumanSpotSetting;
 import com.stf.bj.app.utils.TextureActor;
 
 public class GameStage extends Stage {
+	private static final boolean RIG_CARDS_FOR_DEBUG = false;
 	private BjManager bjManager;
 	AnimationManager spriteManager;
 	boolean everyOtherClick;
@@ -69,33 +71,51 @@ public class GameStage extends Stage {
 
 	private void createBlackjack(Skin skin) {
 		r = new Random(System.currentTimeMillis());
-		AppSettings settings = AppSettings.getHochunkPratice();
+		AppSettings settings = app.getSettings();
 		bjManager = new BjManager(settings);
 
-		int playerSpot = getPlayerSpotFromSettings(r, app.getSettings().getHumanSpotValue(),
-				settings.getTableRules().getSpots());
+		int playerSpot = getPlayerSpotFromSettings(r, settings.getHumanSpot(), settings.getNumberOfSpots());
 		if (playerSpot >= 0) {
 			bjManager.addPlayer(playerSpot, PlayerType.HUMAN, null);
 		}
-		for (int spot = 0; spot < settings.getTableRules().getSpots(); spot++) {
-			if (spot == playerSpot) {
-				continue;
+		PlayerType playerType = getPlayerTypeFromSettings(settings.getBotPlayerType());
+
+		if (playerType != null) {
+			for (int spot = 0; spot < settings.getNumberOfSpots(); spot++) {
+				if (spot == playerSpot) {
+					continue;
+				}
+				bjManager.addPlayer(spot, playerType, r);
 			}
-			bjManager.addPlayer(spot, PlayerType.REALISTIC_BOT, r);
 		}
 		bjManager.openTable();
-
-		// Player manager is a at different level, should we really do it this way? TODO
 		spriteManager = new AnimationManager(getBatch(), bjManager.getSpots(), settings, skin);
 
-		List<Ranks> ranks = new ArrayList<Ranks>();
-		ranks.add(Ranks.ACE);
-		ranks.add(Ranks.ACE);
-		ranks.add(Ranks.TEN);
-		ranks.add(Ranks.TEN);
-		ranks.add(Ranks.ACE);
-		ranks.add(Ranks.TEN);
-		// bjManager.shadyShit(ranks);
+		if (RIG_CARDS_FOR_DEBUG) {
+			List<Ranks> ranks = new ArrayList<Ranks>();
+			ranks.add(Ranks.ACE);
+			ranks.add(Ranks.ACE);
+			ranks.add(Ranks.TEN);
+			ranks.add(Ranks.TEN);
+			ranks.add(Ranks.ACE);
+			ranks.add(Ranks.TEN);
+			bjManager.shadyShit(ranks);
+		}
+	}
+
+	private PlayerType getPlayerTypeFromSettings(BotPlayersSetting botPlayersValue) {
+		switch (botPlayersValue) {
+		case BASIC:
+			return PlayerType.BASIC_BOT;
+		case COUNTING:
+			return PlayerType.BASIC_COUNTING_BOT;
+		case INDEX:
+			return PlayerType.BASIC_INDEX_COUNTING_BOT;
+		case REALISTIC:
+			return PlayerType.REALISTIC_BOT;
+		default:
+			return null;
+		}
 	}
 
 	private int getPlayerSpotFromSettings(Random r, HumanSpotSetting humanSpotSetting, int spots) {

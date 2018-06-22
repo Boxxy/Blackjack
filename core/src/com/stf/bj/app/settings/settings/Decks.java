@@ -15,7 +15,7 @@ public class Decks extends Setting{
 	}
 	
 	public Decks(Preferences preferences) {
-		super(preferences, "Number Of Decks (Not Working)", DecksSetting.SIX.ordinal());
+		super(preferences, "Number Of Decks", DecksSetting.SIX.ordinal());
 		for(DecksSetting e : DecksSetting.values()) {
 			addOption(e.displayName, e.ordinal());
 		}

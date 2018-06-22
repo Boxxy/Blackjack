@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import com.stf.bj.app.settings.TableRules;
-import com.stf.bj.app.settings.TableRules.PayAndCleanPlayerBlackjack;
+import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.settings.PayoutBlackjack.PayoutBlackjackSetting;
 
 /**
  * The table class contains all of the black jack game logic, the Table's spots,
@@ -22,7 +22,7 @@ import com.stf.bj.app.settings.TableRules.PayAndCleanPlayerBlackjack;
  */
 public class Server {
 
-	private TableRules tableRules;
+	private AppSettings settings;
 
 	/**
 	 * Enum for Table State: Closed Idle (Open but empty) Ready To Deal (Open with
@@ -41,15 +41,15 @@ public class Server {
 	private int currentSpotIndex;
 	private int currentHandIndex;
 
-	public Server(TableRules tableRules) {
-		if (tableRules == null)
+	public Server(AppSettings settings) {
+		if (settings == null)
 			throw new IllegalArgumentException();
-		this.tableRules = tableRules;
-		shoe = new Shoe(tableRules.getDecks());
+		this.settings = settings;
+		shoe = new Shoe(settings.getDecks());
 		dealer = new Hand();
-		spots = new ArrayList<Spot>(tableRules.getSpots());
-		for (int i = 0; i < tableRules.getSpots(); i++) {
-			spots.add(new Spot(tableRules.getSplits()+1));
+		spots = new ArrayList<Spot>(settings.getNumberOfSpots());
+		for (int i = 0; i < settings.getNumberOfSpots(); i++) {
+			spots.add(new Spot(settings.getSplits()+1));
 		}
 		state = TableStates.CLOSED;
 		eventsQueue = new LinkedList<Event>();
@@ -87,7 +87,7 @@ public class Server {
 			throw new IllegalStateException("Can't shuffle now");
 		shoe.shuffle();
 		registerEvent(new Event(EventType.DECK_SHUFFLED));
-		shoe.setCut(tableRules.getPenetration());
+		shoe.setCut(settings.getPenetration());
 	}
 
 	public boolean canStartDeal() {
@@ -135,7 +135,7 @@ public class Server {
 			if(inInsurance()) {
 				registerEvent(new Event(EventType.INSURANCE_COLLECTED));
 			}
-			if(tableRules.getPayAndCleanPlayerBlackjack() == PayAndCleanPlayerBlackjack.PLAY_START)
+			if(settings.getPayoutBlackjack() == PayoutBlackjackSetting.BEFORE_PLAY)
 				cleanupBlackjacks();
 			updateCurrentSpotAndHand();
 			if (currentSpot!=null) {
@@ -216,7 +216,7 @@ public class Server {
 	 * @return True if the dealer needs another card
 	 */
 	private boolean dealerNeedsToHit() {
-		if (tableRules.dealerHitSoft17()) {
+		if (settings.dealerHitSoft17()) {
 			return dealer.getSoftTotal() < 18 && dealer.getHardTotal() < 17;
 		} else {
 			return dealer.getSoftTotal() < 17;
@@ -556,7 +556,7 @@ public class Server {
 			return false;
 		if (!currentSpot.canDoubleDown())
 			return false;
-		if (!currentSpot.isNatural() && !tableRules.doubleAfterSplit())
+		if (!currentSpot.isNatural() && !settings.doubleAfterSplit())
 			return false;
 		return true;
 	}
@@ -566,7 +566,7 @@ public class Server {
 			return false;
 		if (!currentSpot.canSurrender())
 			return false;
-		if (!tableRules.surrenderAllowed())
+		if (!settings.surrenderAllowed())
 			return false;
 		return true;
 	}
@@ -613,9 +613,9 @@ public class Server {
 			return false;
 		if (!currentSpot.canSplit())
 			return false;
-		if (currentSpot.getTimesSplit() >= tableRules.getSplits())
+		if (currentSpot.getTimesSplit() >= settings.getSplits())
 			return false;
-		if (!tableRules.aceReSplit() && !currentSpot.isNatural() && currentSpot.isAces())
+		if (!settings.aceResplitAllowed() && !currentSpot.isNatural() && currentSpot.isAces())
 			return false;
 		return true;
 	}

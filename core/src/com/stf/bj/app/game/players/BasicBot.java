@@ -27,7 +27,30 @@ public class BasicBot implements Player {
 		}
 		this.r = r;
 		setStrategy(new BaseHoChunkStrategy());
-		int delayFromSettings = settings.getTimingSettings().getBaseBotDelay();
+		int delayFromSettings;
+		switch(settings.getBotSpeed()) {
+		case FAST:
+			delayFromSettings = 50;
+			break;
+		case FASTEST:
+			delayFromSettings = 25;
+			break;
+		case INSTANT:
+			delayFromSettings = 0;
+			break;
+		case MEDIUM:
+			delayFromSettings = 75;
+			break;
+		case SLOW:
+			delayFromSettings = 110;
+			break;
+		case SLOWEST:
+			delayFromSettings = 180;
+			break;
+		default:
+			throw new IllegalStateException();
+		}
+		
 		if (delayFromSettings > 0) {
 			baseDelay = delayFromSettings / 2 + r.nextInt(delayFromSettings);
 		} else {

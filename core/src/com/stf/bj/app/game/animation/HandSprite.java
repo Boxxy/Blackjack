@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Align;
 import com.stf.bj.app.game.bj.Hand;
 import com.stf.bj.app.game.server.Card;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.settings.CardSpeed.CardSpeedSetting;
 
 public class HandSprite {
 
@@ -29,10 +30,32 @@ public class HandSprite {
 	private static final float CARD_WIDTH = 71f;
 	private static final float CARD_HEIGHT = 96f;
 
+	private final float cardSpeed;
+
 	public HandSprite(Hand hand, AppSettings settings) {
 		this.hand = hand;
 		this.settings = settings;
 		cardSprites = new ArrayList<CardSprite>();
+		cardSpeed = cardSpeedFromSetting(settings.getCardSpeed());
+	}
+
+	private float cardSpeedFromSetting(CardSpeedSetting cardSpeedSetting) {
+		switch (cardSpeedSetting) {
+		case FAST:
+			return 16f;
+		case FASTEST:
+			return 20f;
+		case INSTANT:
+			return 0f;
+		case MEDIUM:
+			return 12f;
+		case SLOW:
+			return 8f;
+		case SLOWEST:
+			return 4f;
+		default:
+			throw new IllegalStateException();
+		}
 	}
 
 	public void tick(Batch batch, BitmapFont font) {
@@ -63,12 +86,13 @@ public class HandSprite {
 
 	public void addCard(Card card, boolean doubled) {
 		float rotation = 0f;
-		if (doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
+		if (doubled && settings.isDoubleCardSideways()) {
 			rotation = 90f;
 		}
 
 		CardSprite cs = new CardSprite(card, AnimationManager.DECK_ANCHOR, doubled);
-		cs.setVelocity(settings.getTimingSettings().getCardSpeed());
+
+		cs.setVelocity(cardSpeed);
 		cs.setDestination(getPlayerCardLocation(hand.getSize() - 1, doubled), rotation);
 		cardSprites.add(cs);
 	}
@@ -77,19 +101,19 @@ public class HandSprite {
 		if (cardIndex < 0) {
 			throw new IllegalStateException();
 		}
-		float x = settings.getAnimationSettings().getHoriziontalCardOffset() * cardIndex;
-		float y = settings.getAnimationSettings().getVerticalCardOffset() * cardIndex;
+		float x = settings.getHorizontalCardOffset() * cardIndex;
+		float y = settings.getVerticalCardOffset() * cardIndex;
 
-		if (doubled && settings.getAnimationSettings().isDoubleCardSideways()) {
+		if (doubled && settings.isDoubleCardSideways()) {
 			x += DOUBLED_CARD_OFFSET_X;
 			y += DOUBLED_CARD_OFFSET_Y;
-			if (settings.getAnimationSettings().getHoriziontalCardOffset() == 0) {
+			if (settings.getHorizontalCardOffset() == 0) {
 				x += (CARD_WIDTH - CARD_HEIGHT) / 2 + .5f;
 			}
 		}
 
-		if (settings.getAnimationSettings().getVerticalCardOffset() < 0) {
-			y -= settings.getAnimationSettings().getVerticalCardOffset() * 5;
+		if (settings.getVerticalCardOffset() < 0) {
+			y -= settings.getVerticalCardOffset() * 5;
 		}
 
 		return new Vector2(anchor.x + x, anchor.y + y);

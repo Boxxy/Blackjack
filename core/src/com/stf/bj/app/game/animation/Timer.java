@@ -1,29 +1,49 @@
 package com.stf.bj.app.game.animation;
 
 import com.stf.bj.app.game.server.EventType;
-import com.stf.bj.app.settings.TimingSettings;
+import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.settings.settings.DealerSpeed.DealerSpeedSetting;
 
 public class Timer {
-	private final TimingSettings settings;
 	private int delay = 0;
 	private int wagerInsuranceTimer = 0;
-	
-	public Timer(TimingSettings settings) {
-		this.settings = settings;
+	private final int dealerDelay;
+
+	public Timer(AppSettings settings) {
+		dealerDelay = calculatedDealerDelay(settings.getDealerSpeed());
 	}
-	
-	public int getDelayForEventType(EventType eventType){
-		switch(eventType) {
+
+	private int calculatedDealerDelay(DealerSpeedSetting dealerSpeedSetting) {
+		switch (dealerSpeedSetting) {
+		case SLOWEST:
+			return 150;
+		case SLOW:
+			return 100;
+		case MEDIUM:
+			return 60;
+		case FAST:
+			return 40;
+		case FASTEST:
+			return 20;
+		case INSTANT:
+			return 0;
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
+	public int getDelayForEventType(EventType eventType) {
+		switch (eventType) {
 		case DEALER_BLACKJACK:
 		case DEALER_BUSTED:
 			return 0;
 		case DEALER_GAINED_CARD:
 		case DEALER_GAINED_FACE_DOWN_CARD:
-			return settings.getDealerCardDelay();
+			return dealerDelay * 2;
 		case SPOT_GAINED_CARD:
-			return settings.getPlayerCardDelay();
+			return dealerDelay;
 		case DECK_SHUFFLED:
-			return settings.getShuffleDelay();
+			return dealerDelay * 4;
 		case INSURANCE_COLLECTED:
 		case INSURANCE_PAID:
 			return 0;
@@ -34,40 +54,40 @@ public class Timer {
 		case WIN:
 		case WIN_BLACKJACK:
 		case WIN_DOUBLE:
-			return settings.getPayOutDelay();
+			return dealerDelay;
 		case PLAYER_BUSTED:
-			return settings.getBustDelay();
+			return getBustDelay();
 		case SPOT_DOUBLE:
 		case SPOT_HIT:
 		case SPOT_SPLIT:
 		case SPOT_STAND:
 		case SPOT_SURRENDER:
-			return settings.getPlayDelay();
+			return dealerDelay;
 		default:
 			return 0;
 		}
-		
+
 	}
-	
+
 	public boolean hasDelay() {
 		return delay > 0;
 	}
-	
+
 	public void tickDelay() {
 		delay--;
 	}
-	
+
 	public void setDelay(int delay) {
 		this.delay = delay;
 	}
-	
+
 	public void setDelayForEventType(EventType eventType) {
 		setDelay(getDelayForEventType(eventType));
 	}
 
 	public void dealTimerWageChanged() {
-		if (wagerInsuranceTimer < settings.getWagerTimerAdditional())
-			wagerInsuranceTimer = settings.getWagerTimerAdditional();
+		if (wagerInsuranceTimer < dealerDelay)
+			wagerInsuranceTimer = dealerDelay;
 	}
 
 	public boolean dealTimer() {
@@ -79,12 +99,12 @@ public class Timer {
 	}
 
 	public void dealTimerSpeedUp() {
-		wagerInsuranceTimer = settings.getWagerTimerAdditional();
+		wagerInsuranceTimer = dealerDelay;
 	}
 
 	public void insuranceTimerWageChanged() {
-		if (wagerInsuranceTimer < settings.getInsuranceTimerAdditional())
-			wagerInsuranceTimer = settings.getInsuranceTimerAdditional();
+		if (wagerInsuranceTimer < dealerDelay)
+			wagerInsuranceTimer = dealerDelay;
 	}
 
 	public boolean insuranceTimer() {
@@ -96,14 +116,23 @@ public class Timer {
 	}
 
 	public void resetWagerTimer() {
-		wagerInsuranceTimer = settings.getWagerTimerBase();
+		wagerInsuranceTimer = dealerDelay * 5;
 	}
+
 	public void resetInsuranceTimer() {
-		wagerInsuranceTimer = settings.getInsuranceTimerBase();
+		wagerInsuranceTimer = dealerDelay * 5;
 	}
-	
+
 	public int getWagerInsuranceTimer() {
 		return wagerInsuranceTimer;
 	}
-	
+
+	public int getBustDelay() {
+		return dealerDelay * 2;
+	}
+	public int getDealerDelay() {
+		//Maybe add some randomness here?
+		return dealerDelay;
+	}
+
 }
