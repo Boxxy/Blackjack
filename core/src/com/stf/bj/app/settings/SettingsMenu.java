@@ -1,39 +1,18 @@
 package com.stf.bj.app.settings;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.stf.bj.app.StfBlackjack;
 import com.stf.bj.app.StfBlackjack.Screens;
-import com.stf.bj.app.settings.settings.BotPlayers;
-import com.stf.bj.app.settings.settings.BotSpeed;
-import com.stf.bj.app.settings.settings.CardSpeed;
-import com.stf.bj.app.settings.settings.DealerSpeed;
-import com.stf.bj.app.settings.settings.Decks;
-import com.stf.bj.app.settings.settings.DoubleAfterSplit;
-import com.stf.bj.app.settings.settings.HumanSpot;
-import com.stf.bj.app.settings.settings.NumberOfSplits;
-import com.stf.bj.app.settings.settings.NumberOfSpots;
-import com.stf.bj.app.settings.settings.ResplitAces;
 import com.stf.bj.app.settings.settings.Setting;
-import com.stf.bj.app.settings.settings.Surrender;
-import com.stf.bj.app.settings.settings.TableMax;
-import com.stf.bj.app.settings.settings.TableMin;
-import com.stf.bj.app.utils.TextureActor;
 
 public class SettingsMenu extends Stage {
 

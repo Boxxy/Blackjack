@@ -1,32 +1,27 @@
 package com.stf.bj.app.game.players;
 
 import com.stf.bj.app.game.bj.Spot;
-import com.stf.bj.app.game.players.strategy.HoChunkStrategyDown0;
-import com.stf.bj.app.game.players.strategy.HoChunkStrategyUp0;
-import com.stf.bj.app.game.players.strategy.HoChunkStrategyUp6;
-import com.stf.bj.app.game.players.strategy.Strategy;
 import com.stf.bj.app.game.server.Card;
 import com.stf.bj.app.game.server.Hand;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class Coach {
 	private final Spot spot;
 	private final AppSettings settings;
+	private final FullStrategy strategy;
 	double trueCount = 0;
 	int count = 0;
 	int cardsSeen = 0;
 	int dealerUpCard = -15;
 	double decksLeft = 0;
 
-	Strategy down0 = new HoChunkStrategyDown0();
-	Strategy up0 = new HoChunkStrategyUp0();
-	Strategy up6 = new HoChunkStrategyUp6();
-	Strategy currentStrategy;
 	private String message = "";
 
-	public Coach(Spot spot, AppSettings settings) {
+	public Coach(Spot spot, FullStrategy strategy, AppSettings settings) {
 		this.spot = spot;
 		this.settings = settings;
+		this.strategy = strategy;
 		System.out.println("Greetings, I am your coach!");
 	}
 
@@ -124,43 +119,28 @@ public class Coach {
 		String s = "Missed play: " + (h.isSoft() ? " soft " : " ") + h.getSoftTotal() + " vs " + dealerUpCard;
 		s += "\n      You " + playDone + " instead of " + idealPlay;
 		if (sometimesCorrect) {
-			s += "\n         At some counts you would have made the correct play, but the count was "
-					+ count + " (" + getTrueCount() + ")";
+			s += "\n         At some counts you would have made the correct play, but the count was " + count + " ("
+					+ getTrueCount() + ")";
 		}
 		return s;
 	}
 
 	private Play getProperPlay(Hand h, boolean canDouble, boolean canSplit, boolean canSurrender) {
-		setCorrectStrategy();
-		return currentStrategy.getPlay(h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit, canSurrender);
+		return strategy.getPlay(getTrueCount(), h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit,
+				canSurrender);
 	}
 
 	private boolean wasPlayCorrectWithAnyStrategy(Play p, Hand h, boolean canDouble, boolean canSplit,
 			boolean canSurrender) {
 
-		if (p == down0.getPlay(h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit, canSurrender)) {
-			return true;
-		}
-		if (p == up0.getPlay(h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit, canSurrender)) {
-			return true;
-		}
-		if (p == up6.getPlay(h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit, canSurrender)) {
-			return true;
+		for (int count = -9; count < 10; count++) {
+			if (p == strategy.getPlay(count, h.getSoftTotal(), dealerUpCard, h.isSoft(), canDouble, canSplit,
+					canSurrender)) {
+				return true;
+			}
 		}
 
 		return false;
-	}
-
-	private void setCorrectStrategy() {
-		int trueCount = getTrueCount();
-		if (trueCount < 0) {
-			currentStrategy = down0;
-		} else if (trueCount < 6) {
-			currentStrategy = up0;
-		} else {
-			currentStrategy = up6;
-		}
-
 	}
 
 	public void checkInsurancePlay() {
@@ -168,7 +148,7 @@ public class Coach {
 			return;
 		}
 		boolean boughtInsurance = (spot.isBettingInsurance() || spot.tookEvenMoney());
-		boolean shouldHave = getTrueCount() >= 6;
+		boolean shouldHave = strategy.getInsurance(getTrueCount());
 
 		if (shouldHave != boughtInsurance) {
 			String s = generateInsuranceMessage(shouldHave);
@@ -177,25 +157,12 @@ public class Coach {
 	}
 
 	private String generateInsuranceMessage(boolean shouldHave) {
-		return "Missed Insurance: True count was " + count + " (" + getTrueCount() + "), so you should " + (shouldHave ? "" : "NOT ")
-				+ " have bought insurance";
+		return "Missed Insurance: True count was " + count + " (" + getTrueCount() + "), so you should "
+				+ (shouldHave ? "" : "NOT ") + " have bought insurance";
 	}
 
 	private double getWager() {
-		int trueCount = getTrueCount();
-		if (trueCount < 2) {
-			return 5;
-		} else if (trueCount < 3) {
-			return 10;
-		} else if (trueCount < 4) {
-			return 15;
-		} else if (trueCount < 6) {
-			return 25;
-		} else if (trueCount < 8) {
-			return 50;
-		} else {
-			return 100;
-		}
+		return strategy.getWager(getTrueCount());
 	}
 
 	private int getTrueCount() {

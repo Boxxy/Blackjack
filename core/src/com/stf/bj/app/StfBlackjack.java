@@ -3,7 +3,6 @@ package com.stf.bj.app;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,17 +11,19 @@ import com.stf.bj.app.game.GameStage;
 import com.stf.bj.app.mainMenu.MainMenu;
 import com.stf.bj.app.settings.AppSettings;
 import com.stf.bj.app.settings.SettingsMenu;
+import com.stf.bj.app.strategy.FullStrategy;
+import com.stf.bj.app.strategy.StrategyMenu;
 
 public class StfBlackjack extends Game {
 
-	private Stage bjStage, mainMenuStage, settingsStage, stage;
+	private Stage bjStage, mainMenuStage, settingsStage,strategyStage, stage;
 	ScreenViewport svp;
 	private Skin skin;
 	private Preferences preferences;
 	private AppSettings settings;
 
 	public enum Screens {
-		MAIN_MENU, GAME, SETTINGS;
+		MAIN_MENU, GAME, SETTINGS, STRATEGY;
 	}
 
 	@Override
@@ -71,6 +72,13 @@ public class StfBlackjack extends Game {
 			}
 			stageToSet = settingsStage;
 			break;
+		case STRATEGY:
+			if (strategyStage == null) {
+				strategyStage = new StrategyMenu(this);
+			}
+			stageToSet = strategyStage;
+			break;
+		
 		default:
 			break;
 
@@ -97,5 +105,9 @@ public class StfBlackjack extends Game {
 	
 	public AppSettings getSettings(){
 		return settings;
+	}
+	
+	public FullStrategy getStrategy() {
+		return settings.getFullStrategy();
 	}
 }

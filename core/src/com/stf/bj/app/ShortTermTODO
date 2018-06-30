@@ -1,6 +1,14 @@
+Buttons for the hit/stay/betting
+
 Player score and stats
 Logging
-Player Coach Settings
+
+Settings To Add/Implement
+	Card Offset
+	Table min/Max
+	Count Ramp
+	Strategy Tables
+	Insurance Strategy
 
 Table Hopping / no more negative moneys/ Animations to match
 
@@ -10,7 +18,7 @@ Animation/Graphical improvements
   Chips should be their own sprites'
   	Better control the clean up animation (chips and cards)
   Sprite sheet for cards instead of individual textures
-  Decouple animations from framerate (assumes 60fps atm)
+  Decouple from framerate (assumes 60fps atm)
   Coach text on screen in a useful way
 
 

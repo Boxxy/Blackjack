@@ -3,32 +3,30 @@ package com.stf.bj.app.game.players;
 import java.util.Random;
 
 import com.stf.bj.app.game.bj.Spot;
-import com.stf.bj.app.game.players.strategy.BaseHoChunkStrategy;
-import com.stf.bj.app.game.players.strategy.Strategy;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class BasicBot implements Player {
 
-	private Strategy strategy;
-	private int dealerUpCardValue = -1;
+	protected FullStrategy strategy;
+	protected int dealerUpCardValue = -1;
 	private int mySpotIndex = -1;
 	protected int delay = 0;
 	protected final int baseDelay;
 	protected final Random r;
 	private final Spot spot;
-	
 
-	public BasicBot(AppSettings settings, Random r, Spot spot) {
+	public BasicBot(AppSettings settings, FullStrategy strategy, Random r, Spot spot) {
 		this.spot = spot;
-		if(r == null) {
+		this.strategy = strategy;
+		if (r == null) {
 			r = new Random(System.currentTimeMillis());
 		}
 		this.r = r;
-		setStrategy(new BaseHoChunkStrategy());
 		int delayFromSettings;
-		switch(settings.getBotSpeed()) {
+		switch (settings.getBotSpeed()) {
 		case FAST:
 			delayFromSettings = 50;
 			break;
@@ -50,17 +48,13 @@ public class BasicBot implements Player {
 		default:
 			throw new IllegalStateException();
 		}
-		
+
 		if (delayFromSettings > 0) {
 			baseDelay = delayFromSettings / 2 + r.nextInt(delayFromSettings);
 		} else {
 			baseDelay = 0;
 		}
 		resetDelay();
-	}
-
-	public void setStrategy(Strategy strategy) {
-		this.strategy = strategy;
 	}
 
 	protected void reset() {
@@ -73,10 +67,14 @@ public class BasicBot implements Player {
 			delay--;
 			return null;
 		}
+		return getMove(0, handIndex, canDouble, canSplit, canSurrender);
+	}
+
+	protected Play getMove(int trueCount, int handIndex, boolean canDouble, boolean canSplit, boolean canSurrender) {
 		Play play;
 		boolean isSoft = isHandSoft(handIndex);
 		int total = getHandSoftTotal(handIndex);
-		play = strategy.getPlay(total, dealerUpCardValue, isSoft, canDouble, canSplit, canSurrender);
+		play = strategy.getPlay(trueCount, total, dealerUpCardValue, isSoft, canDouble, canSplit, canSurrender);
 		return play;
 	}
 
@@ -91,6 +89,7 @@ public class BasicBot implements Player {
 	protected int getHandSoftTotal(int handIndex) {
 		return spot.getHand(handIndex).getHand().getSoftTotal();
 	}
+
 	protected int getHandHardTotal(int handIndex) {
 		return spot.getHand(handIndex).getHand().getHardTotal();
 	}

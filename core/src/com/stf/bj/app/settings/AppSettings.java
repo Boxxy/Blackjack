@@ -41,6 +41,7 @@ import com.stf.bj.app.settings.settings.Coach;
 import com.stf.bj.app.settings.settings.Coach.CoachSetting;
 import com.stf.bj.app.settings.settings.DealerSpeed.DealerSpeedSetting;
 import com.stf.bj.app.settings.settings.TableMin.TableMinSetting;
+import com.stf.bj.app.strategy.FullStrategy;
 import com.stf.bj.app.settings.settings.TableMax.TableMaxSetting;
 
 public class AppSettings {
@@ -64,6 +65,7 @@ public class AppSettings {
 	private final TableMax tableMax;
 	private final Penetration penetration;
 	private final Coach coach;
+	private final FullStrategy fullStrategy;
 
 	public AppSettings(Preferences prefs) {
 		decks = new Decks(prefs);
@@ -86,6 +88,7 @@ public class AppSettings {
 		tableMax = new TableMax(prefs);
 		penetration = new Penetration(prefs);
 		coach = new Coach(prefs);
+		fullStrategy = new FullStrategy(prefs);
 	}
 
 	public void updateAndSave() {
@@ -371,6 +374,10 @@ public class AppSettings {
 
 	public float getVerticalCardOffset() {
 		return 20f;
+	}
+
+	public FullStrategy getFullStrategy() {
+		return fullStrategy;
 	}
 
 }

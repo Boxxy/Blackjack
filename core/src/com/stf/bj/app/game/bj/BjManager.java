@@ -22,12 +22,14 @@ import com.stf.bj.app.game.server.Suits;
 import com.stf.bj.app.game.server.Server;
 import com.stf.bj.app.settings.AppSettings;
 import com.stf.bj.app.settings.settings.PayoutBlackjack.PayoutBlackjackSetting;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class BjManager {
 	Server table;
 	int playerSpot = 0;
 	private final List<Spot> spots;
 	private final AppSettings settings;
+	private final FullStrategy strategy;
 	private final Timer timer;
 	int cardsDealt;
 
@@ -37,8 +39,9 @@ public class BjManager {
 
 	private GamePhase gamePhase = GamePhase.OTHER;
 
-	public BjManager(AppSettings settings) {
+	public BjManager(AppSettings settings, FullStrategy strategy) {
 		this.settings = settings;
+		this.strategy = strategy;
 		table = new Server(settings);
 		spots = new ArrayList<Spot>();
 		for (int spotIndex = 0; spotIndex < settings.getNumberOfSpots(); spotIndex++) {
@@ -313,19 +316,19 @@ public class BjManager {
 		Spot spot = spots.get(spotIndex);
 		switch (pt) {
 		case BASIC_BOT:
-			p = new BasicBot(settings, r, spot);
+			p = new BasicBot(settings, strategy, r, spot);
 			break;
 		case BASIC_COUNTING_BOT:
-			p = new BasicCountingBot(settings, r, spot);
+			p = new BasicCountingBot(settings, strategy, r, spot);
 			break;
 		case BASIC_INDEX_COUNTING_BOT:
-			p = new BasicIndexCountingBot(settings, r, spot);
+			p = new BasicIndexCountingBot(settings, strategy, r, spot);
 			break;
 		case REALISTIC_BOT:
-			p = new RealisticBot(settings, r, spot);
+			p = new RealisticBot(settings, strategy, r, spot);
 			break;
 		case HUMAN:
-			p = new Human(spot, settings);
+			p = new Human(spot, strategy, settings);
 			break;
 		default:
 			throw new IllegalArgumentException("Player Type not yet supported");

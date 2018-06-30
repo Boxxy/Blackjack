@@ -5,6 +5,7 @@ import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class Human implements Player {
 
@@ -18,9 +19,9 @@ public class Human implements Player {
 	Spot spot;
 	private final Coach coach;
 
-	public Human(Spot spot, AppSettings settings) {
+	public Human(Spot spot, FullStrategy strategy, AppSettings settings) {
 		this.spot = spot;
-		this.coach = new Coach(spot, settings);
+		this.coach = new Coach(spot, strategy, settings);
 	}
 
 	@Override

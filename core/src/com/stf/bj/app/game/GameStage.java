@@ -72,7 +72,7 @@ public class GameStage extends Stage {
 	private void createBlackjack(Skin skin) {
 		r = new Random(System.currentTimeMillis());
 		AppSettings settings = app.getSettings();
-		bjManager = new BjManager(settings);
+		bjManager = new BjManager(settings, app.getStrategy());
 
 		int playerSpot = getPlayerSpotFromSettings(r, settings.getHumanSpot(), settings.getNumberOfSpots());
 		if (playerSpot >= 0) {

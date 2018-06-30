@@ -6,6 +6,7 @@ import com.stf.bj.app.game.bj.Spot;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class BasicCountingBot extends BasicBot {
 
@@ -13,8 +14,8 @@ public class BasicCountingBot extends BasicBot {
 	int penetration;
 	int totalCards;
 
-	public BasicCountingBot(AppSettings settings, Random r, Spot s) {
-		super(settings, r, s);
+	public BasicCountingBot(AppSettings settings, FullStrategy strategy, Random r, Spot s) {
+		super(settings, strategy, r, s);
 		totalCards = settings.getDecks() * 52;
 	}
 
@@ -50,21 +51,7 @@ public class BasicCountingBot extends BasicBot {
 			delay--;
 			return -1;
 		}
-
-		double trueCount = getTrueCount();
-		if (trueCount < 2) {
-			return 5;
-		} else if (trueCount < 3) {
-			return 10;
-		} else if (trueCount < 4) {
-			return 15;
-		} else if (trueCount < 6) {
-			return 25;
-		} else if (trueCount < 8) {
-			return 50;
-		} else {
-			return 100;
-		}
+		return strategy.getWager((int) getTrueCount());
 	}
 
 	protected double getTrueCount() {
@@ -73,7 +60,7 @@ public class BasicCountingBot extends BasicBot {
 	
 	@Override
 	public boolean getInsurancePlay() {
-		return getTrueCount() >= 6;
+		return strategy.getInsurance((int) getTrueCount());
 	}
 
 }

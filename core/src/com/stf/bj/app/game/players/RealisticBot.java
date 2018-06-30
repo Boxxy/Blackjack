@@ -3,12 +3,10 @@ package com.stf.bj.app.game.players;
 import java.util.Random;
 
 import com.stf.bj.app.game.bj.Spot;
-import com.stf.bj.app.game.players.strategy.BaseHoChunkStrategy;
-import com.stf.bj.app.game.players.strategy.Strategy;
-import com.stf.bj.app.game.players.strategy.TypicalNoobStrategy;
 import com.stf.bj.app.game.server.Event;
 import com.stf.bj.app.game.server.EventType;
 import com.stf.bj.app.settings.AppSettings;
+import com.stf.bj.app.strategy.FullStrategy;
 
 public class RealisticBot extends BasicBot {
 
@@ -28,14 +26,13 @@ public class RealisticBot extends BasicBot {
 	private final PlayAbility playAbility;
 	private final Random r;
 	private double wager = -1.0;
-	private Strategy good;
-	private Strategy bad;
 	private final BetChanging betChanging;
 	private boolean insurancePlay = false;
 	private boolean calculatedInsurancePlay = false;
+	private boolean messUpNextPlay = false;
 
-	public RealisticBot(AppSettings settings, Random r, Spot s) {
-		super(settings, r, s);
+	public RealisticBot(AppSettings settings, FullStrategy strategy, Random r, Spot s) {
+		super(settings, strategy, r, s);
 
 		if (r == null) {
 			r = new Random(System.currentTimeMillis());
@@ -44,12 +41,6 @@ public class RealisticBot extends BasicBot {
 		insuranceStrategy = InsuranceStrategy.values()[r.nextInt(InsuranceStrategy.values().length)];
 		playAbility = PlayAbility.values()[r.nextInt(PlayAbility.values().length)];
 		setBaseBet();
-		if (playAbility == PlayAbility.NOOB) {
-			setStrategy(new TypicalNoobStrategy());
-		} else if (playAbility == PlayAbility.RANDOM) {
-			good = new TypicalNoobStrategy();
-			bad = new BaseHoChunkStrategy();
-		}
 		betChanging = BetChanging.RANDOM;
 	}
 
@@ -121,7 +112,21 @@ public class RealisticBot extends BasicBot {
 			delay--;
 			return null;
 		}
-		return super.getMove(handIndex, canDouble, canSplit, canSurrender);
+		Play play = super.getMove(handIndex, canDouble, canSplit, canSurrender);
+
+		if (messUpNextPlay) {
+			if (play != Play.SPLIT && canSplit) {
+				play = Play.SPLIT;
+			} else if (play != Play.DOUBLEDOWN && canSplit) {
+				play = Play.DOUBLEDOWN;
+			} else if (play == Play.STAND) {
+				play = Play.HIT;
+			} else {
+				play = Play.STAND;
+			}
+		}
+
+		return play;
 	}
 
 	@Override
@@ -129,11 +134,10 @@ public class RealisticBot extends BasicBot {
 		super.reset();
 		calculatedInsurancePlay = false;
 		int random = r.nextInt(10);
-		if (random == 0 && playAbility == PlayAbility.RANDOM) {
-			setStrategy(good);
-		} else if (random == 1 && playAbility == PlayAbility.RANDOM) {
-			setStrategy(bad);
-		} else if ((random == 2 || random == 3) && betChanging == BetChanging.RANDOM) {
+		if (playAbility == PlayAbility.RANDOM) {
+			messUpNextPlay = (random < 2);
+		}
+		if ((random == 2 || random == 3) && betChanging == BetChanging.RANDOM) {
 			wager += 5;
 		} else if (random == 4 && betChanging == BetChanging.RANDOM) {
 			if (wager > 6) {
