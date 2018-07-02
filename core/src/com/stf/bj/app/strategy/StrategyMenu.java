@@ -26,6 +26,7 @@ public class StrategyMenu extends Stage {
 	private Table table;
 	private ButtonGroup<Button> countButtonGroup;
 	private int currentCount;
+	private WagerButton wagerButton;
 
 	private TacticButton[][] hardPlays = new TacticButton[StrategyTypes.HARD.getRows()][10];
 	private TacticButton[][] softPlays = new TacticButton[StrategyTypes.SOFT.getRows()][10];
@@ -93,7 +94,11 @@ public class StrategyMenu extends Stage {
 		table.add(otherStrategies);
 
 		Table otherButtons = new Table();
-		otherButtons.add(copyButton);
+		otherButtons.add(copyButton).colspan(2);
+		otherButtons.row();
+		otherButtons.add(new Label("Wager: ", skin, "white"));
+		wagerButton= new WagerButton(skin, "big");
+		otherButtons.add(wagerButton);
 		table.add(otherButtons);
 
 		countButtonGroup.setMaxCheckCount(1);
@@ -223,6 +228,8 @@ public class StrategyMenu extends Stage {
 		} else {
 			copyButton.setText("Copy from " + countToCopyFrom());
 		}
+		
+		wagerButton.setWager(app.getStrategy().getWager(currentCount));
 
 	}
 
@@ -256,6 +263,8 @@ public class StrategyMenu extends Stage {
 			}
 		}
 
+		app.getStrategy().setWager(currentCount, wagerButton.currentWager);
+		
 		app.getStrategy().save(app.getPreferences(), currentCount);
 
 	}

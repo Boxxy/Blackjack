@@ -57,6 +57,11 @@ public class FullStrategy {
 		return s.getWager();
 	}
 
+	public void setWager(int trueCount, double wager) {
+		Strategy s = getStrategyFromCount(trueCount);
+		s.setWager(wager);	
+	}
+
 	private void setStrategy(int trueCount, Strategy strategy) {
 		strategies[trueCountToIndex(trueCount)] = strategy;
 	}
